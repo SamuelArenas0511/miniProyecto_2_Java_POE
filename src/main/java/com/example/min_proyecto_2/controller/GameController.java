@@ -8,6 +8,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -15,7 +16,6 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Random;
 
 public class GameController {
@@ -35,6 +35,7 @@ public class GameController {
     @FXML
     private Label lbStopWatch;
     private int seconds;
+    private Timeline timeline;
 
     private MatrixCreator matrixCreator;
 
@@ -45,7 +46,7 @@ public class GameController {
 
 
     @FXML
-    public void onHandleBStartSudoku(javafx.event.ActionEvent actionEvent) {
+    public void onHandleBStartSudoku(ActionEvent actionEvent) {
         seconds = 0;
         stopWatch();
         for (var node : sudokuGridPane.getChildren()) {
@@ -73,10 +74,20 @@ public class GameController {
 
     private void onHandleEntryTxt(TextField textField, int i, int j) {
         textField.setOnKeyReleased(event -> {
-            if(textField.getText().equals(matrixCreator.getMatrix()[i][j] + "") && !textField.getText().isEmpty()) {
+            if(textField.getText().equals(matrixCreator.getMatrix()[i][j] + "") && !textField.getText().isEmpty() && textField.isEditable()) {
                 textField.setEditable(false);
                 textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-font-size: 30");
                 lbStatus.setText("Correcto!");
+                if (verificationWinner()){
+                    timeline.stop();
+                    System.out.println("GANASTE");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("¡Ganaste!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("¡Felicidades, has ganado! en un tiempo de: " + lbStopWatch.getText() );
+                    alert.showAndWait();
+
+                };
             }else{
                 textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #7D3434; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-font-size: 30");
                 lbStatus.setText("Incorrecto!");
@@ -85,16 +96,29 @@ public class GameController {
     }
 
     private void stopWatch() {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateStopWatch()));
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateStopWatch()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
+
 
     private void updateStopWatch(){
         seconds++;
         int minutes = seconds / 60;
         int secondremainder = seconds % 60;
         lbStopWatch.setText(String.format("%02d:%02d", minutes, secondremainder));
+    }
+
+    private boolean verificationWinner(){
+        for (var node : sudokuGridPane.getChildren()) {
+            if (node instanceof TextField textField){
+                if(textField.isEditable()){
+                    System.out.println("Aun no ganas");
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 
