@@ -6,6 +6,8 @@ public class MatrixCreator {
 
     private final int[][] matrix = new int[6][6];
 
+    private final int[][] startingNumbers = new int[6][6];
+
     public MatrixCreator(){resetMatrix();}
 
     public void fillSudokuMatrix() {
@@ -28,7 +30,7 @@ public class MatrixCreator {
                         j = -1;
                         break;
                     }
-                } while (!numberVerification(matrix, i, j, num));
+                } while (!verifyNumber(matrix, i, j, num));
                 if (intentos <= max_int) {
                     matrix[i][j] = num;
                 }
@@ -57,7 +59,7 @@ public class MatrixCreator {
         }
     }
 
-    public boolean numberVerification(int[][] tablet, int fil, int col, int num) {
+    public boolean verifyNumber(int[][] tablet, int fil, int col, int num) {
         for (int i = 0; i < tablet.length; i++) {
             if (tablet[fil][i] == num && i != col) {
                 return false;
@@ -78,6 +80,38 @@ public class MatrixCreator {
             }
         }
         return true;
+    }
+
+    public void randomStartingNumbers() {
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                startingNumbers[i][j] = 0;
+            }
+        }
+        int fil;
+        int col;
+        int rangofil = 1;
+        int rangofcol = 2;
+        for(int i = 0; i < 6; i += 2){
+            for(int j = 0; j < 6; j += 3){
+                for(int k = 0; k < 2; k++) {
+                    do {
+                        fil = generateRandomNumberInRange(i, i + rangofil);
+                        col = generateRandomNumberInRange(j, j + rangofcol);
+                    } while (startingNumbers[fil][col] == 1);
+                    startingNumbers[fil][col] = 1;
+                }
+            }
+        }
+    }
+
+    public int[][] getStartingNumbers() {
+        return startingNumbers;
+    }
+
+    public static int generateRandomNumberInRange(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min + 1) + min;
     }
 
     public int[][] getMatrix() {

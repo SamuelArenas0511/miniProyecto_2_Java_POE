@@ -55,13 +55,14 @@ public class GameController {
         }
         matrixCreator.resetMatrix();
         matrixCreator.fillSudokuMatrix();
+        matrixCreator.randomStartingNumbers();
         Random r = new Random();
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 TextField textField = new TextField();
                 textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #C49C66; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-font-size: 30");
                 textField.setAlignment(Pos.CENTER);
-                if(r.nextInt(2) == 0){
+                if(matrixCreator.getStartingNumbers()[i][j] == 1){
                     textField.setText(matrixCreator.getMatrix()[i][j] + "");
                     textField.setEditable(false);
                 }
