@@ -1,5 +1,6 @@
 package com.example.min_proyecto_2.controller;
 
+import com.example.min_proyecto_2.model.Game;
 import com.example.min_proyecto_2.model.MatrixCreator;
 import com.example.min_proyecto_2.view.GameStage;
 import com.example.min_proyecto_2.view.WelcomeStage;
@@ -36,18 +37,24 @@ public class GameController {
     private Label lbStopWatch;
     private int seconds;
     private Timeline timeline;
+    private boolean isStopWatchOn;
 
     private MatrixCreator matrixCreator;
+    private Game game;
 
     public void initialize() {
-
         matrixCreator = new MatrixCreator();
+        game = new Game();
+        isStopWatchOn = false;
     }
 
 
     @FXML
     public void onHandleBStartSudoku(ActionEvent actionEvent) {
         seconds = 0;
+        if(isStopWatchOn){
+            timeline.stop();
+        }
         stopWatch();
         for (var node : sudokuGridPane.getChildren()) {
             if (node instanceof TextField textField)
@@ -56,6 +63,8 @@ public class GameController {
         matrixCreator.resetMatrix();
         matrixCreator.fillSudokuMatrix();
         matrixCreator.randomStartingNumbers();
+        game.setMatchedNumbers(matrixCreator.getStartingNumbers());
+        game.setMatrix(matrixCreator.getMatrix());
         Random r = new Random();
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
@@ -75,11 +84,20 @@ public class GameController {
 
     private void onHandleEntryTxt(TextField textField, int i, int j) {
         textField.setOnKeyReleased(event -> {
-            if(textField.getText().equals(matrixCreator.getMatrix()[i][j] + "") && !textField.getText().isEmpty() && textField.isEditable()) {
+            textField.positionCaret(0);
+            if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
+                textField.setText(textField.getText().substring(0, 1));
+            }
+            if(!game.checkNumberFoolProof(textField.getText())){
+                textField.setText("");
+                return;
+            }
+            if(game.isNumberCorrect(textField.getText(), i, j)) {
+                game.numberMatchedIn(i,j);
                 textField.setEditable(false);
                 textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-font-size: 30");
                 lbStatus.setText("Correcto!");
-                if (verificationWinner()){
+                if (game.verifyWinner()){
                     timeline.stop();
                     System.out.println("GANASTE");
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -100,6 +118,7 @@ public class GameController {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateStopWatch()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+        isStopWatchOn = true;
     }
 
 
@@ -108,18 +127,6 @@ public class GameController {
         int minutes = seconds / 60;
         int secondremainder = seconds % 60;
         lbStopWatch.setText(String.format("%02d:%02d", minutes, secondremainder));
-    }
-
-    private boolean verificationWinner(){
-        for (var node : sudokuGridPane.getChildren()) {
-            if (node instanceof TextField textField){
-                if(textField.isEditable()){
-                    System.out.println("Aun no ganas");
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
 
