@@ -84,9 +84,9 @@ public class GameController {
 
     private void onHandleEntryTxt(TextField textField, int i, int j) {
         textField.setOnKeyReleased(event -> {
-            textField.positionCaret(0);
             if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
                 textField.setText(textField.getText().substring(0, 1));
+                textField.setText("");
             }
             if(!game.checkNumberFoolProof(textField.getText())){
                 textField.setText("");
