@@ -1,7 +1,7 @@
 package com.example.min_proyecto_2.controller;
 
-import com.example.min_proyecto_2.model.Game;
-import com.example.min_proyecto_2.model.MatrixCreator;
+import com.example.min_proyecto_2.model.game.Game;
+import com.example.min_proyecto_2.model.matrixcreator.MatrixCreator;
 import com.example.min_proyecto_2.view.GameStage;
 import com.example.min_proyecto_2.view.WelcomeStage;
 import javafx.animation.KeyFrame;
