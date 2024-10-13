@@ -18,6 +18,7 @@ public class GameStage extends Stage {
         gameController = loader.getController();
         Scene scene = new Scene(root);
         setTitle("Sudoku");
+        setResizable(false);
         setScene(scene);
         show();
     }

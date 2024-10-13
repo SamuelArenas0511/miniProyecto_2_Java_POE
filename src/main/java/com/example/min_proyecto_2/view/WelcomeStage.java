@@ -3,6 +3,7 @@ package com.example.min_proyecto_2.view;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ public class WelcomeStage extends Stage {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/min_proyecto_2/welcome-view.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
+        setResizable(false);
         setTitle("Sudoku");
         setScene(scene);
         show();
