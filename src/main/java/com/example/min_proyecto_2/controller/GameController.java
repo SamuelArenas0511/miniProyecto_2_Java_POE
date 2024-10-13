@@ -1,7 +1,8 @@
 package com.example.min_proyecto_2.controller;
 
-import com.example.min_proyecto_2.model.Game;
-import com.example.min_proyecto_2.model.MatrixCreator;
+import com.example.min_proyecto_2.model.font.Fonts;
+import com.example.min_proyecto_2.model.game.Game;
+import com.example.min_proyecto_2.model.matrixcreator.MatrixCreator;
 import com.example.min_proyecto_2.view.GameStage;
 import com.example.min_proyecto_2.view.WelcomeStage;
 import javafx.animation.KeyFrame;
@@ -25,13 +26,23 @@ public class GameController {
     private GridPane sudokuGridPane;
 
     @FXML
-    private Button bStartSudoku;
-
-    @FXML
     private Button bGoBack;
 
     @FXML
-    private Label lbStatus;
+    private Label lbScore;
+
+    @FXML
+    private Label lbAttempts;
+
+    @FXML
+    private Button btnUndoGame;
+
+    @FXML
+    private Button btnNote;
+
+    @FXML
+    private Button btnHint;
+    private int numberOfHints = 3;
 
     @FXML
     private Label lbStopWatch;
@@ -43,33 +54,27 @@ public class GameController {
     private Game game;
 
     public void initialize() {
+
+        lbStopWatch.setFont(new Fonts(40, "bold").getFont());
+        lbScore.setFont(new Fonts(35, "semibold").getFont());
+
+
         matrixCreator = new MatrixCreator();
         game = new Game();
         isStopWatchOn = false;
-    }
-
-
-    @FXML
-    public void onHandleBStartSudoku(ActionEvent actionEvent) {
-        seconds = 0;
-        if(isStopWatchOn){
-            timeline.stop();
-        }
         stopWatch();
-        for (var node : sudokuGridPane.getChildren()) {
-            if (node instanceof TextField textField)
-                textField.setText("");
-        }
+
         matrixCreator.resetMatrix();
         matrixCreator.fillSudokuMatrix();
         matrixCreator.randomStartingNumbers();
         game.setMatchedNumbers(matrixCreator.getStartingNumbers());
         game.setMatrix(matrixCreator.getMatrix());
-        Random r = new Random();
+
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 TextField textField = new TextField();
-                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #C49C66; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-font-size: 30");
+                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #916254;");
+                textField.setFont(new Fonts(40,"bold").getFont());
                 textField.setAlignment(Pos.CENTER);
                 if(matrixCreator.getStartingNumbers()[i][j] == 1){
                     textField.setText(matrixCreator.getMatrix()[i][j] + "");
@@ -80,7 +85,9 @@ public class GameController {
 
             }
         }
+
     }
+
 
     private void onHandleEntryTxt(TextField textField, int i, int j) {
         textField.setOnKeyReleased(event -> {
@@ -95,8 +102,10 @@ public class GameController {
             if(game.isNumberCorrect(textField.getText(), i, j)) {
                 game.numberMatchedIn(i,j);
                 textField.setEditable(false);
-                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-font-size: 30");
-                lbStatus.setText("Correcto!");
+                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
+                textField.setFont(new Fonts(40,"bold").getFont());
+                game.setScore(game.getScore() + 100);
+                lbScore.setText(game.getScore() + "");
                 if (game.verifyWinner()){
                     timeline.stop();
                     System.out.println("GANASTE");
@@ -108,8 +117,25 @@ public class GameController {
 
                 };
             }else{
-                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #7D3434; -fx-font-weight: bold; -fx-font-family: Tahoma; -fx-font-size: 30");
-                lbStatus.setText("Incorrecto!");
+                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #7D3434");
+                textField.setFont(new Fonts(40,"bold").getFont());
+                game.setAttempts(game.getAttempts() + 1);
+                lbAttempts.setText(game.getAttempts() + "/3");
+                if (game.checkLostGame()){
+                    timeline.stop();
+                    System.out.println("Perdiste");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("¡Perdiste!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("¡Te has quedado sin intentos, intenta nuevamente " );
+                    alert.showAndWait();
+                    try {
+                        WelcomeStage.getInstance();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    GameStage.deleteInstance();
+                }
             }
         });
     }
@@ -127,6 +153,58 @@ public class GameController {
         int minutes = seconds / 60;
         int secondremainder = seconds % 60;
         lbStopWatch.setText(String.format("%02d:%02d", minutes, secondremainder));
+    }
+
+
+    @FXML
+    void onHandleBHint(ActionEvent event) {
+        if(numberOfHints > 0){
+            game.generateHint();
+            numberOfHints -= 1;
+            for (var node : sudokuGridPane.getChildren()) {
+                Integer rowIndex = GridPane.getRowIndex(node);
+                Integer colIndex = GridPane.getColumnIndex(node);
+                rowIndex = (rowIndex == null) ? 0 : rowIndex;
+                colIndex = (colIndex == null) ? 0 : colIndex;
+
+                if (rowIndex == game.getHintRowPosition() && colIndex == game.getHintColumnPosition() && node instanceof TextField textField) {
+                    textField.setText(game.getNumberFromArray(game.getHintRowPosition(), game.getHintColumnPosition()) + "");
+                    game.numberMatchedIn(game.getHintRowPosition(),game.getHintColumnPosition());
+                    textField.setEditable(false);
+                    textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
+                    textField.setFont(new Fonts(40,"bold").getFont());
+                    game.setScore(game.getScore() + 100);
+                    lbScore.setText(game.getScore() + "");
+                    if (game.verifyWinner()){
+                        timeline.stop();
+                        System.out.println("GANASTE");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("¡Ganaste!");
+                        alert.setHeaderText(null);
+                        alert.setContentText("¡Felicidades, has ganado! en un tiempo de: " + lbStopWatch.getText() );
+                        alert.showAndWait();
+
+                    };
+                }
+            }
+        }else{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("¡Sin pistas!");
+            alert.setHeaderText(null);
+            alert.setContentText("¡Te quedaste sin pistas :C" );
+            alert.showAndWait();
+        }
+
+    }
+
+    @FXML
+    void onHandleBNote(ActionEvent event) {
+
+    }
+
+    @FXML
+    void onHandleBUndo(ActionEvent event) {
+
     }
 
 

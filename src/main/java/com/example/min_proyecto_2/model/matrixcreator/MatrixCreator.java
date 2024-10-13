@@ -1,8 +1,8 @@
-package com.example.min_proyecto_2.model;
+package com.example.min_proyecto_2.model.matrixcreator;
 
 import java.util.Random;
 
-public class MatrixCreator {
+public class MatrixCreator implements IMatrixCreator {
 
     private final int[][] matrix = new int[6][6];
 
@@ -10,6 +10,7 @@ public class MatrixCreator {
 
     public MatrixCreator(){resetMatrix();}
 
+    @Override
     public void fillSudokuMatrix() {
 
         int intentos, num;
@@ -24,7 +25,7 @@ public class MatrixCreator {
                     intentos++;
                     if (intentos > max_int) {
                         System.out.println("Demasiados intentos, reiniciando tablero.");
-                        showmatrix();
+                        showMatrix();
                         resetMatrix();
                         i = 0;
                         j = -1;
@@ -37,10 +38,11 @@ public class MatrixCreator {
             }
         }
 
-        showmatrix();
+        showMatrix();
     }
 
-    public void showmatrix() {
+    @Override
+    public void showMatrix() {
         String show= "";
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
@@ -51,6 +53,7 @@ public class MatrixCreator {
         System.out.println(show);
     }
 
+    @Override
     public void resetMatrix() {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
@@ -59,6 +62,7 @@ public class MatrixCreator {
         }
     }
 
+    @Override
     public boolean verifyNumber(int[][] tablet, int fil, int col, int num) {
         for (int i = 0; i < tablet.length; i++) {
             if (tablet[fil][i] == num && i != col) {
@@ -82,6 +86,7 @@ public class MatrixCreator {
         return true;
     }
 
+    @Override
     public void randomStartingNumbers() {
         for(int i = 0; i < matrix.length; i++) {
             for(int j = 0; j < matrix[i].length; j++) {
@@ -105,15 +110,18 @@ public class MatrixCreator {
         }
     }
 
+    @Override
     public int[][] getStartingNumbers() {
         return startingNumbers;
     }
+
 
     public static int generateRandomNumberInRange(int min, int max) {
         Random random = new Random();
         return random.nextInt(max - min + 1) + min;
     }
 
+    @Override
     public int[][] getMatrix() {
         return matrix;
     }
