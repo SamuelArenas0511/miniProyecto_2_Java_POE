@@ -14,13 +14,23 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Random;
 
 public class GameController {
+
+    @FXML
+    private Label lbNumberHints;
+
+    @FXML
+    private Label lbStatusNotes;
+    private boolean statusNotes = false;
 
     @FXML
     private GridPane sudokuGridPane;
@@ -32,7 +42,7 @@ public class GameController {
     private Label lbScore;
 
     @FXML
-    private Label lbAttempts;
+    private ImageView ivAttempts;
 
     @FXML
     private Button btnUndoGame;
@@ -57,10 +67,12 @@ public class GameController {
 
         lbStopWatch.setFont(new Fonts(40, "bold").getFont());
         lbScore.setFont(new Fonts(35, "semibold").getFont());
-
+        bGoBack.setFont(new Fonts(21, "bold").getFont());
+        lbNumberHints.setFont(new Fonts(12, "semibold").getFont());
 
         matrixCreator = new MatrixCreator();
         game = new Game();
+        game.setAttempts(3);
         isStopWatchOn = false;
         stopWatch();
 
@@ -91,52 +103,59 @@ public class GameController {
 
     private void onHandleEntryTxt(TextField textField, int i, int j) {
         textField.setOnKeyReleased(event -> {
-            if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
-                textField.setText(textField.getText().substring(0, 1));
-                textField.setText("");
-            }
-            if(!game.checkNumberFoolProof(textField.getText())){
-                textField.setText("");
-                return;
-            }
-            if(game.isNumberCorrect(textField.getText(), i, j)) {
-                game.numberMatchedIn(i,j);
-                textField.setEditable(false);
-                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
-                textField.setFont(new Fonts(40,"bold").getFont());
-                game.setScore(game.getScore() + 100);
-                lbScore.setText(game.getScore() + "");
-                if (game.verifyWinner()){
-                    timeline.stop();
-                    System.out.println("GANASTE");
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("¡Ganaste!");
-                    alert.setHeaderText(null);
-                    alert.setContentText("¡Felicidades, has ganado! en un tiempo de: " + lbStopWatch.getText() );
-                    alert.showAndWait();
-
-                };
-            }else{
-                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #7D3434");
-                textField.setFont(new Fonts(40,"bold").getFont());
-                game.setAttempts(game.getAttempts() + 1);
-                lbAttempts.setText(game.getAttempts() + "/3");
-                if (game.checkLostGame()){
-                    timeline.stop();
-                    System.out.println("Perdiste");
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("¡Perdiste!");
-                    alert.setHeaderText(null);
-                    alert.setContentText("¡Te has quedado sin intentos, intenta nuevamente " );
-                    alert.showAndWait();
-                    try {
-                        WelcomeStage.getInstance();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    GameStage.deleteInstance();
+            if(!statusNotes){
+                if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
+                    textField.setText(textField.getText().substring(0, 1));
+                    textField.setText("");
                 }
+                if(!game.checkNumberFoolProof(textField.getText())){
+                    textField.setText("");
+                    return;
+                }
+                if(game.isNumberCorrect(textField.getText(), i, j)) {
+                    game.numberMatchedIn(i,j);
+                    textField.setEditable(false);
+                    textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
+                    textField.setFont(new Fonts(40,"bold").getFont());
+                    game.setScore(game.getScore() + 100);
+                    lbScore.setText(game.getScore() + "");
+                    if (game.verifyWinner()){
+                        timeline.stop();
+                        System.out.println("GANASTE");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("¡Ganaste!");
+                        alert.setHeaderText(null);
+                        alert.setContentText("¡Felicidades, has ganado! en un tiempo de: " + lbStopWatch.getText() );
+                        alert.showAndWait();
+
+                    };
+                }else{
+                    textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #7D3434");
+                    textField.setFont(new Fonts(40,"bold").getFont());
+                    game.setAttempts(game.getAttempts() - 1);
+                    ivAttempts.setImage(new Image("C:\\Users\\Windows 10 Pro\\IdeaProjects\\min_Proyecto_2\\src\\main\\resources\\com\\example\\min_proyecto_2\\image\\vidas"+game.getAttempts() + ".png"));
+                    if (game.checkLostGame()){
+                        timeline.stop();
+                        System.out.println("Perdiste");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("¡Perdiste!");
+                        alert.setHeaderText(null);
+                        alert.setContentText("¡Te has quedado sin intentos, intenta nuevamente " );
+                        alert.showAndWait();
+                        try {
+                            WelcomeStage.getInstance();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        GameStage.deleteInstance();
+                    }
+                }
+            }else{
+                System.out.println("Esta activado el modo notas");
+                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #A1A1A1");
+                textField.setFont(new Fonts(40,"bold").getFont());
             }
+
         });
     }
 
@@ -161,6 +180,7 @@ public class GameController {
         if(numberOfHints > 0){
             game.generateHint();
             numberOfHints -= 1;
+            lbNumberHints.setText(numberOfHints + "");
             for (var node : sudokuGridPane.getChildren()) {
                 Integer rowIndex = GridPane.getRowIndex(node);
                 Integer colIndex = GridPane.getColumnIndex(node);
@@ -199,7 +219,13 @@ public class GameController {
 
     @FXML
     void onHandleBNote(ActionEvent event) {
-
+        if(!statusNotes){
+            statusNotes = true;
+            lbStatusNotes.setText("On");
+        }else{
+            statusNotes = false;
+            lbStatusNotes.setText("Off");
+        }
     }
 
     @FXML
