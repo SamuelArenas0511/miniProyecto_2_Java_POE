@@ -18,7 +18,6 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.Random;
 
 public class GameController {
 
@@ -50,6 +49,8 @@ public class GameController {
     private Timeline timeline;
     private boolean isStopWatchOn;
 
+    private TextField[][] textFields;
+
     private MatrixCreator matrixCreator;
     private Game game;
 
@@ -61,6 +62,9 @@ public class GameController {
 
         matrixCreator = new MatrixCreator();
         game = new Game();
+        textFields = new TextField[6][6];
+
+
         isStopWatchOn = false;
         stopWatch();
 
@@ -72,19 +76,20 @@ public class GameController {
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
-                TextField textField = new TextField();
-                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #916254;");
-                textField.setFont(new Fonts(40,"bold").getFont());
-                textField.setAlignment(Pos.CENTER);
+                textFields[i][j] = new TextField();
+                textFields[i][j].setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #916254;");
+                textFields[i][j].setFont(new Fonts(40,"bold").getFont());
+                textFields[i][j].setAlignment(Pos.CENTER);
                 if(matrixCreator.getStartingNumbers()[i][j] == 1){
-                    textField.setText(matrixCreator.getMatrix()[i][j] + "");
-                    textField.setEditable(false);
+                    textFields[i][j].setText(matrixCreator.getMatrix()[i][j] + "");
+                    textFields[i][j].setEditable(false);
                 }
-                onHandleEntryTxt(textField,i,j);
-                sudokuGridPane.add(textField, j, i);
+                onHandleEntryTxt(textFields[i][j],i,j);
+                sudokuGridPane.add(textFields[i][j], j, i);
 
             }
         }
+        game.unDoStackAdd(textFields);
 
     }
 
@@ -92,16 +97,24 @@ public class GameController {
     private void onHandleEntryTxt(TextField textField, int i, int j) {
         textField.setOnKeyReleased(event -> {
             if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
-                textField.setText(textField.getText().substring(0, 1));
-                textField.setText("");
+                if(textField.getText().substring(0,1).equals(textField.getText().substring(1,2))){
+                    textField.setText("");
+                }else {
+                    textField.setText(textField.getText().substring(1, 2));
+                    textField.positionCaret(1);
+                }
             }
             if(!game.checkNumberFoolProof(textField.getText())){
                 textField.setText("");
                 return;
             }
+            if(!event.getCode().isDigitKey()){
+                return;
+            }
+
+            System.out.println(String.valueOf(event.getCode()));
             if(game.isNumberCorrect(textField.getText(), i, j)) {
                 game.numberMatchedIn(i,j);
-                textField.setEditable(false);
                 textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
                 textField.setFont(new Fonts(40,"bold").getFont());
                 game.setScore(game.getScore() + 100);
@@ -137,6 +150,7 @@ public class GameController {
                     GameStage.deleteInstance();
                 }
             }
+            game.unDoStackAdd(textFields);
         });
     }
 
@@ -170,7 +184,6 @@ public class GameController {
                 if (rowIndex == game.getHintRowPosition() && colIndex == game.getHintColumnPosition() && node instanceof TextField textField) {
                     textField.setText(game.getNumberFromArray(game.getHintRowPosition(), game.getHintColumnPosition()) + "");
                     game.numberMatchedIn(game.getHintRowPosition(),game.getHintColumnPosition());
-                    textField.setEditable(false);
                     textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
                     textField.setFont(new Fonts(40,"bold").getFont());
                     game.setScore(game.getScore() + 100);
@@ -187,6 +200,7 @@ public class GameController {
                     };
                 }
             }
+            game.unDoStackAdd(textFields);
         }else{
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("¡Sin pistas!");
@@ -204,7 +218,19 @@ public class GameController {
 
     @FXML
     void onHandleBUndo(ActionEvent event) {
-
+        if(game.getUnDoStackAction().size() > 1) {
+            game.unDoStackPop();
+            for (int i = 0; i < textFields.length; i++) {
+                for (int j = 0; j < textFields[i].length; j++) {
+                    if(game.getUnDoStackAction().peek()[i][j] == 0){
+                        textFields[i][j].setText("");
+                    }
+                    else {
+                        textFields[i][j].setText(String.valueOf(game.getUnDoStackAction().peek()[i][j]));
+                    }
+                }
+            }
+        }
     }
 
 

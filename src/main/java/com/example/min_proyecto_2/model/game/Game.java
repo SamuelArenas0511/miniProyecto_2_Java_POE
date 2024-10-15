@@ -1,11 +1,16 @@
 package com.example.min_proyecto_2.model.game;
 
 import com.example.min_proyecto_2.model.matrixcreator.MatrixCreator;
+import javafx.scene.control.TextField;
+
+import java.util.Stack;
 
 public class Game implements IGame{
     
     int[][] matchedNumbers;
     int[][] matrix;
+    private Stack<int[][]> unDoStackAction;
+    private Stack<int[][]> undoStackMatchedNumbers;
     int score;
     int attempts;
     int hintRowPosition = 0;
@@ -14,6 +19,8 @@ public class Game implements IGame{
     public Game() {
         matchedNumbers = new int[6][6];
         matrix = new int[6][6];
+        unDoStackAction = new Stack<>();
+        undoStackMatchedNumbers = new Stack<>();
     }
     @Override
     public void setMatchedNumbers(int[][] matchedNumbers) {
@@ -74,7 +81,7 @@ public class Game implements IGame{
     }
 
     public boolean checkLostGame(){
-        if (attempts >= 3) {
+        if (attempts >= 1000) {
             return true;
         }
         return false;
@@ -93,6 +100,38 @@ public class Game implements IGame{
 
 
 
+    }
+
+    public void unDoStackAdd(TextField[][] textFields){
+        int[][] copyTextFields = new int[6][6];
+        for(int i = 0; i < textFields.length; i++){
+            for(int j = 0; j < textFields[i].length; j++){
+                if(!textFields[i][j].getText().equals("")) {
+                    copyTextFields[i][j] = Integer.parseInt(textFields[i][j].getText());
+                }
+                else{
+                    copyTextFields[i][j] = 0;
+                }
+            }
+        }
+        unDoStackAction.add(copyTextFields);
+        undoStackMatchedNumbers.add(matchedNumbers);
+    }
+
+    public void unDoStackPop(){
+        unDoStackAction.pop();
+        undoStackMatchedNumbers.pop();
+        matchedNumbers = undoStackMatchedNumbers.peek();
+        for(int i = 0; i < matchedNumbers.length; i++){
+            for(int j = 0; j < matchedNumbers[i].length; j++){
+                System.out.print(String.valueOf(matchedNumbers[i][j]) + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public Stack<int[][]> getUnDoStackAction(){
+        return unDoStackAction;
     }
 
     public int getHintRowPosition() {
