@@ -61,7 +61,7 @@
          <effect>
             <ImageInput>
                <source>
-                  <Image url="file:/C:/Users/Windows%2010%20Pro/IdeaProjects/min_Proyecto_2/src/main/resources/com/example/min_proyecto_2/image/1.png" />
+                  <Image url="@image/1.png" />
                </source>
             </ImageInput>
          </effect>
@@ -76,7 +76,7 @@
          <effect>
             <ImageInput>
                <source>
-                  <Image url="file:/C:/Users/Windows%2010%20Pro/IdeaProjects/min_Proyecto_2/src/main/resources/com/example/min_proyecto_2/image/2.png" />
+                  <Image url="@image/2.png" />
                </source>
             </ImageInput>
          </effect>
@@ -91,7 +91,7 @@
          <effect>
             <ImageInput>
                <source>
-                  <Image url="file:/C:/Users/Windows%2010%20Pro/IdeaProjects/min_Proyecto_2/src/main/resources/com/example/min_proyecto_2/image/3.png" />
+                  <Image url="@image/3.png" />
                </source>
             </ImageInput>
          </effect>
@@ -108,7 +108,7 @@
       </Label>
       <ImageView fx:id="ivAttempts" fitHeight="95.0" fitWidth="93.0" layoutX="665.0" layoutY="229.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@image/vidas3.png" />
+            <Image url="@vidas3.png" />
          </image>
       </ImageView>
    </children>

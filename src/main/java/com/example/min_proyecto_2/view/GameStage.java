@@ -43,6 +43,10 @@ public class GameStage extends Stage {
         GameStageHolder.INSTANCE = null;
     }
 
+    public void closeInstance(){
+        hide();
+    }
+
 
 
 

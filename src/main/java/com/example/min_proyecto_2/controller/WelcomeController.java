@@ -25,21 +25,52 @@ public class WelcomeController {
 
     @FXML
     private GridPane gridPaneWelcome;
+    private GameStage gameStage;
+
+    private static int counterNumber = 0;
 
     @FXML
-    public void initialize() {
-        gridPaneWelcome.setStyle("-fx-background-image: url('file:/C:/Users/Windows%2010%20Pro/IdeaProjects/min_Proyecto_2/src/main/resources/com/example/min_proyecto_2/image/background_welcome.png'); " +
+    public void initialize() throws IOException {
+        gridPaneWelcome.setStyle("-fx-background-image: url('/com/example/min_proyecto_2/image/background_welcome.png'); " +
                 "-fx-background-repeat: no-repeat; " +
                 "-fx-background-size: cover;");
         btnContinueGame.setFont(new Fonts(25, "semibold").getFont());
         lbTime.setFont(new Fonts(10, "semibold").getFont());
         btnNewGame.setFont(new Fonts(25, "semibold").getFont());
+        if(counterNumber > 0) {
+            if(GameStage.getInstance().getGameController().getIsGameFinished()){
+                lbTime.setText("Time: 00:00");
+            }else {
+                lbTime.setText("Time: " + GameStage.getInstance().getGameController().getGameTime());
+            }
+        }
+        counterNumber++;
     }
 
     @FXML
     public void handlePlayButton(ActionEvent event) throws IOException {
-        GameStage.getInstance();
+        if(GameStage.getInstance() == null){
+            GameStage.getInstance();
+        }else{
+            GameStage.deleteInstance();
+            GameStage.getInstance();
+        }
         WelcomeStage.deleteInstance();
+
+    }
+
+    @FXML
+    public void handleContinueButton(ActionEvent event) throws IOException {
+        if(GameStage.getInstance() == null){
+            GameStage.getInstance();
+        }else{
+
+            GameStage.getInstance().show();
+            GameStage.getInstance().getGameController().continueGame();
+
+        }
+        WelcomeStage.deleteInstance();
+
     }
 
 }
