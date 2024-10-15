@@ -8,9 +8,9 @@ import java.util.Stack;
 public class Game implements IGame{
     
     int[][] matchedNumbers;
+    int[][] scoredNumbers;
     int[][] matrix;
     private Stack<int[][]> unDoStackAction;
-    private Stack<int[][]> undoStackMatchedNumbers;
     int score;
     int attempts;
     int hintRowPosition = 0;
@@ -20,7 +20,7 @@ public class Game implements IGame{
         matchedNumbers = new int[6][6];
         matrix = new int[6][6];
         unDoStackAction = new Stack<>();
-        undoStackMatchedNumbers = new Stack<>();
+        scoredNumbers = new int[6][6];
     }
     @Override
     public void setMatchedNumbers(int[][] matchedNumbers) {
@@ -33,8 +33,21 @@ public class Game implements IGame{
     }
 
     @Override
-    public void numberMatchedIn(int i, int j) {
+    public void numberMatchedIn(int i, int j){
         matchedNumbers[i][j] = 1;
+    }
+
+    @Override
+    public void updateMatchedNumbers(TextField[][] txt) {
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                if(txt[i][j].getText().equals(String.valueOf(matrix[i][j]))) {
+                    matchedNumbers[i][j] = 1;
+                }else{
+                    matchedNumbers[i][j] = 0;
+                }
+            }
+        }
     }
 
     @Override
@@ -64,8 +77,18 @@ public class Game implements IGame{
         return txt.length() > cantidadCaracteres;
     }
 
-    public void setScore(int score){
-        this.score = score;
+    public void setScore(int score, int i, int j){
+        for(int k = 0; k < matchedNumbers.length; k++){
+            for(int l = 0; l < matchedNumbers[i].length; l++){
+                System.out.print(String.valueOf(scoredNumbers[k][l]) + "\t");
+            }
+            System.out.println();
+        }
+        System.out.println();
+        if(scoredNumbers[i][j] == 0) {
+            this.score = score;
+            scoredNumbers[i][j] = 1;
+        }
     }
 
     public int getScore(){
@@ -115,19 +138,10 @@ public class Game implements IGame{
             }
         }
         unDoStackAction.add(copyTextFields);
-        undoStackMatchedNumbers.add(matchedNumbers);
     }
 
     public void unDoStackPop(){
         unDoStackAction.pop();
-        undoStackMatchedNumbers.pop();
-        matchedNumbers = undoStackMatchedNumbers.peek();
-        for(int i = 0; i < matchedNumbers.length; i++){
-            for(int j = 0; j < matchedNumbers[i].length; j++){
-                System.out.print(String.valueOf(matchedNumbers[i][j]) + " ");
-            }
-            System.out.println();
-        }
     }
 
     public Stack<int[][]> getUnDoStackAction(){

@@ -14,6 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
@@ -106,18 +107,21 @@ public class GameController {
             }
             if(!game.checkNumberFoolProof(textField.getText())){
                 textField.setText("");
+                game.unDoStackAdd(textFields);
                 return;
             }
             if(!event.getCode().isDigitKey()){
+                if (event.getCode() == KeyCode.BACK_SPACE && textField.getCaretPosition() == 0) {
+                    game.unDoStackAdd(textFields);
+                }
                 return;
             }
-
+            game.updateMatchedNumbers(textFields);
             System.out.println(String.valueOf(event.getCode()));
             if(game.isNumberCorrect(textField.getText(), i, j)) {
-                game.numberMatchedIn(i,j);
                 textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
                 textField.setFont(new Fonts(40,"bold").getFont());
-                game.setScore(game.getScore() + 100);
+                game.setScore(game.getScore() + 100, i, j);
                 lbScore.setText(game.getScore() + "");
                 if (game.verifyWinner()){
                     timeline.stop();
@@ -186,7 +190,8 @@ public class GameController {
                     game.numberMatchedIn(game.getHintRowPosition(),game.getHintColumnPosition());
                     textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
                     textField.setFont(new Fonts(40,"bold").getFont());
-                    game.setScore(game.getScore() + 100);
+                    textField.setEditable(false);
+                    game.setScore(game.getScore() + 100, game.getHintRowPosition(), game.getHintColumnPosition());
                     lbScore.setText(game.getScore() + "");
                     if (game.verifyWinner()){
                         timeline.stop();
@@ -230,6 +235,7 @@ public class GameController {
                     }
                 }
             }
+            game.updateMatchedNumbers(textFields);
         }
     }
 
