@@ -151,7 +151,8 @@ public class GameController {
                         textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #7D3434");
                         textField.setFont(new Fonts(40,"bold").getFont());
                         game.setAttempts(game.getAttempts() - 1);
-                        ivAttempts.setImage(new Image("C:\\Users\\Windows 10 Pro\\IdeaProjects\\min_Proyecto_2\\src\\main\\resources\\com\\example\\min_proyecto_2\\image\\vidas"+game.getAttempts() + ".png"));
+                        ivAttempts.setImage(new Image(String.valueOf(getClass().getResource("/com/example/min_proyecto_2/vidas" + game.getAttempts() + ".png"))));
+
                         if (game.checkLostGame()){
                             timeline.stop();
                             System.out.println("Perdiste");
@@ -210,7 +211,6 @@ public class GameController {
                     game.numberMatchedIn(game.getHintRowPosition(),game.getHintColumnPosition());
                     textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
                     textField.setFont(new Fonts(40,"bold").getFont());
-                    textField.setEditable(false);
                     game.setScore(game.getScore() + 100, game.getHintRowPosition(), game.getHintColumnPosition());
                     lbScore.setText(game.getScore() + "");
                     if (game.verifyWinner()){

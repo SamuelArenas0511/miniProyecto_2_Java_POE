@@ -108,7 +108,7 @@
       </Label>
       <ImageView fx:id="ivAttempts" fitHeight="95.0" fitWidth="93.0" layoutX="665.0" layoutY="229.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@image/vidas3.png" />
+            <Image url="@vidas3.png" />
          </image>
       </ImageView>
    </children>

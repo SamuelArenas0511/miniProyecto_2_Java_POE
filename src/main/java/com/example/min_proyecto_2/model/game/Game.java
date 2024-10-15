@@ -104,7 +104,7 @@ public class Game implements IGame{
     }
 
     public boolean checkLostGame(){
-        if (attempts >= 3) {
+        if (attempts == 0) {
             return true;
         }
         return false;
