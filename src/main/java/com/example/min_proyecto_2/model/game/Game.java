@@ -3,6 +3,7 @@ package com.example.min_proyecto_2.model.game;
 import com.example.min_proyecto_2.model.matrixcreator.MatrixCreator;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.util.Stack;
 
 public class Game implements IGame{
@@ -125,11 +126,17 @@ public class Game implements IGame{
 
     }
 
-    public void unDoStackAdd(TextField[][] textFields){
+    public void unDoStackAdd(TextField[][] textFields) {
         int[][] copyTextFields = new int[6][6];
         for(int i = 0; i < textFields.length; i++){
             for(int j = 0; j < textFields[i].length; j++){
                 if(!textFields[i][j].getText().equals("")) {
+                    try {
+                        Integer.parseInt(textFields[i][j].getText());
+                    } catch (NumberFormatException e) {
+                        copyTextFields[i][j] = 0;
+                        continue;
+                    }
                     copyTextFields[i][j] = Integer.parseInt(textFields[i][j].getText());
                 }
                 else{

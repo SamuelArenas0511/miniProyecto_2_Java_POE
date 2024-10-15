@@ -60,6 +60,7 @@ public class GameController {
     private int seconds;
     private Timeline timeline;
     private boolean isStopWatchOn;
+    private boolean isGameFinished;
 
     private TextField[][] textFields;
 
@@ -76,6 +77,7 @@ public class GameController {
         matrixCreator = new MatrixCreator();
         game = new Game();
         textFields = new TextField[6][6];
+        isGameFinished = false;
 
 
         game.setAttempts(3);
@@ -155,18 +157,19 @@ public class GameController {
 
                         if (game.checkLostGame()){
                             timeline.stop();
-                            System.out.println("Perdiste");
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle("¡Perdiste!");
                             alert.setHeaderText(null);
                             alert.setContentText("¡Te has quedado sin intentos, intenta nuevamente " );
                             alert.showAndWait();
+                            isGameFinished = true;
                             try {
                                 WelcomeStage.getInstance();
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
                             GameStage.deleteInstance();
+
                         }
                     }
             }else{
@@ -181,6 +184,11 @@ public class GameController {
     private void stopWatch() {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateStopWatch()));
         timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+        isStopWatchOn = true;
+    }
+
+    public void continueGame() {
         timeline.play();
         isStopWatchOn = true;
     }
@@ -268,6 +276,15 @@ public class GameController {
 
         public void OnHandleBGoBack(ActionEvent actionEvent) throws IOException {
         WelcomeStage.getInstance();
-        GameStage.deleteInstance();
+        GameStage.getInstance().closeInstance();
+        timeline.stop();
+    }
+
+    public String getGameTime() {
+        return lbStopWatch.getText();
+    }
+
+    public boolean getIsGameFinished() {
+        return isGameFinished;
     }
 }
