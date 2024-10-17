@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
@@ -99,8 +100,10 @@ public class GameController {
                 if(matrixCreator.getStartingNumbers()[i][j] == 1){
                     textFields[i][j].setText(matrixCreator.getMatrix()[i][j] + "");
                     textFields[i][j].setEditable(false);
+                    textFields[i][j].setDisable(false);
                 }
                 onHandleEntryTxt(textFields[i][j],i,j);
+                onHandlePressedTxt(textFields[i][j],i,j);
                 sudokuGridPane.add(textFields[i][j], j, i);
 
             }
@@ -109,10 +112,20 @@ public class GameController {
 
     }
 
+    private void onHandlePressedTxt(TextField textField, int i, int j) {
+        textField.setOnKeyPressed((KeyEvent event) -> {
+            if(!event.getCode().isDigitKey()){
+                if (event.getCode() == KeyCode.BACK_SPACE && textField.getCaretPosition() == 0) {
+                    game.unDoStackAdd(textFields);
+                }
+            }
+        });
+    }
+
 
     private void onHandleEntryTxt(TextField textField, int i, int j) {
-        textField.setOnKeyReleased(event -> {
-            if(!statusNotes){
+        textField.setOnKeyTyped(event -> {
+            if(!statusNotes && textField.isEditable()){
                 if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
                     if(textField.getText().substring(0,1).equals(textField.getText().substring(1,2))){
                         textField.setText("");
@@ -126,15 +139,11 @@ public class GameController {
                     game.unDoStackAdd(textFields);
                     return;
                 }
-                if(!event.getCode().isDigitKey()){
-                    if (event.getCode() == KeyCode.BACK_SPACE && textField.getCaretPosition() == 0) {
-                        game.unDoStackAdd(textFields);
-                    }
-                    return;
-                }
+
+
                 game.updateMatchedNumbers(textFields);
                 System.out.println(String.valueOf(event.getCode()));
-                if(game.isNumberCorrect(textField.getText(), i, j)) {
+                if(game.isNumberCorrect(event.getCharacter(), i, j)) {
                     textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
                     textField.setFont(new Fonts(40,"bold").getFont());
                     game.setScore(game.getScore() + 100, i, j);
@@ -172,8 +181,20 @@ public class GameController {
 
                         }
                     }
-            }else{
-                System.out.println("Esta activado el modo notas");
+            }else if(statusNotes && textField.isEditable()){
+                if(game.checkMaximumNumberOfCharacters(textField.getText(), 6)){
+                    if(textField.getText().substring(0,1).equals(textField.getText().substring(1,2))){
+                        textField.setText("");
+                    }else {
+                        textField.setText(textField.getText().substring(1, 2));
+                        textField.positionCaret(textField.getText().length() - 1);
+                    }
+                }
+                if(!game.checkNumberFoolProof(textField.getText())){
+                    textField.setText("");
+                    game.unDoStackAdd(textFields);
+                    return;
+                }
                 textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #A1A1A1");
                 textField.setFont(new Fonts(40,"bold").getFont());
             }
