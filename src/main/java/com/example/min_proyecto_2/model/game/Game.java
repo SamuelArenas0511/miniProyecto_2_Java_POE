@@ -166,4 +166,8 @@ public class Game implements IGame{
     public int getNumberFromArray(int i, int j){
         return matrix[i][j];
     }
+
+    public int[][] getMatchedNumbers() {
+        return matchedNumbers;
+    }
 }
