@@ -92,6 +92,20 @@ public class Game implements IGame{
         }
     }
 
+    public void restartScore(){
+        score = 0;
+        for(int k = 0; k < matchedNumbers.length; k++){
+            for (int l = 0; l < matchedNumbers[k].length; l++){
+                scoredNumbers[k][l] = 0;
+            }
+        }
+        for(int k = 0; k < matchedNumbers.length; k++){
+            for (int l = 0; l < matchedNumbers[k].length; l++){
+                matchedNumbers[k][l] = 0;
+            }
+        }
+    }
+
     public int getScore(){
         return score;
     }

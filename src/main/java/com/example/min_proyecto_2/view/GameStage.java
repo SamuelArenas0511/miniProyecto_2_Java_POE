@@ -4,9 +4,11 @@ import com.example.min_proyecto_2.controller.GameController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class GameStage extends Stage {
 
@@ -17,6 +19,8 @@ public class GameStage extends Stage {
         Parent root = loader.load();
         gameController = loader.getController();
         Scene scene = new Scene(root);
+        this.getIcons().add(new Image(getClass().getResourceAsStream("/com/example/min_proyecto_2/image/icon.png")));
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/min_proyecto_2/Style/style.css")).toExternalForm());
         setTitle("Sudoku");
         setResizable(false);
         setScene(scene);
