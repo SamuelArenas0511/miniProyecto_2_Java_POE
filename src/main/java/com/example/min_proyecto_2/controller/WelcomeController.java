@@ -12,6 +12,7 @@ import javafx.scene.layout.*;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class WelcomeController {
     @FXML
@@ -31,21 +32,22 @@ public class WelcomeController {
 
     @FXML
     public void initialize() throws IOException {
-        gridPaneWelcome.setStyle("-fx-background-image: url('/com/example/min_proyecto_2/image/background_welcome.png'); " +
-                "-fx-background-repeat: no-repeat; " +
-                "-fx-background-size: cover;");
+        btnContinueGame.setDisable(true);
         btnContinueGame.setFont(new Fonts(25, "semibold").getFont());
         lbTime.setFont(new Fonts(10, "semibold").getFont());
         btnNewGame.setFont(new Fonts(25, "semibold").getFont());
         if(counterNumber > 0) {
             if(GameStage.getInstance().getGameController().getIsGameFinished()){
+                btnContinueGame.setDisable(true);
                 lbTime.setText("Time: 00:00");
             }else {
+                btnContinueGame.setDisable(false);
                 lbTime.setText("Time: " + GameStage.getInstance().getGameController().getGameTime());
             }
         }
         counterNumber++;
     }
+
 
     @FXML
     public void handlePlayButton(ActionEvent event) throws IOException {

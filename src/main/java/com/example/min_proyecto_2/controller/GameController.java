@@ -9,7 +9,9 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,12 +22,29 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
+import javafx.scene.shape.SVGPath;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Random;
 
 public class GameController {
+
+    @FXML
+    private Label lbAttempts;
+
+    @FXML
+    private Label lbScoreMessage;
+
+    @FXML
+    private Label lbUndo;
+
+    @FXML
+    private Label lbNotes;
+
+    @FXML
+    private Label lbHint;
 
     @FXML
     private Label lbNumberHints;
@@ -70,10 +89,15 @@ public class GameController {
 
     public void initialize() {
 
-        lbStopWatch.setFont(new Fonts(40, "bold").getFont());
-        lbScore.setFont(new Fonts(35, "semibold").getFont());
-        bGoBack.setFont(new Fonts(21, "bold").getFont());
-        lbNumberHints.setFont(new Fonts(12, "semibold").getFont());
+        lbStopWatch.setFont(new Fonts(60, "bold").getFont());
+        lbScore.setFont(new Fonts(45, "semibold").getFont());
+        bGoBack.setFont(new Fonts(25, "bold").getFont());
+        lbNumberHints.setFont(new Fonts(20, "semibold").getFont());
+        lbAttempts.setFont(new Fonts(30, "bold").getFont());
+        lbScoreMessage.setFont(new Fonts(30, "bold").getFont());
+        lbUndo.setFont(new Fonts(30, "bold").getFont());
+        lbNotes.setFont(new Fonts(30, "bold").getFont());
+        lbHint.setFont(new Fonts(30, "bold").getFont());
 
         matrixCreator = new MatrixCreator();
         game = new Game();
@@ -95,7 +119,7 @@ public class GameController {
             for (int j = 0; j < 6; j++) {
                 textFields[i][j] = new TextField();
                 textFields[i][j].setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #916254;");
-                textFields[i][j].setFont(new Fonts(40,"bold").getFont());
+                textFields[i][j].setFont(new Fonts(50,"bold").getFont());
                 textFields[i][j].setAlignment(Pos.CENTER);
                 if(matrixCreator.getStartingNumbers()[i][j] == 1){
                     textFields[i][j].setText(matrixCreator.getMatrix()[i][j] + "");
@@ -145,7 +169,7 @@ public class GameController {
                 System.out.println(String.valueOf(event.getCode()));
                 if(game.isNumberCorrect(event.getCharacter(), i, j)) {
                     textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
-                    textField.setFont(new Fonts(40,"bold").getFont());
+                    textField.setFont(new Fonts(50,"bold").getFont());
                     game.setScore(game.getScore() + 100, i, j);
                     lbScore.setText(game.getScore() + "");
                     if (game.verifyWinner()){
@@ -160,7 +184,7 @@ public class GameController {
                         };
                 }else{
                         textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #7D3434");
-                        textField.setFont(new Fonts(40,"bold").getFont());
+                        textField.setFont(new Fonts(50,"bold").getFont());
                         game.setAttempts(game.getAttempts() - 1);
                         ivAttempts.setImage(new Image(String.valueOf(getClass().getResource("/com/example/min_proyecto_2/vidas" + game.getAttempts() + ".png"))));
 
@@ -182,21 +206,23 @@ public class GameController {
                         }
                     }
             }else if(statusNotes && textField.isEditable()){
-                if(game.checkMaximumNumberOfCharacters(textField.getText(), 6)){
+
+                if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
                     if(textField.getText().substring(0,1).equals(textField.getText().substring(1,2))){
                         textField.setText("");
                     }else {
                         textField.setText(textField.getText().substring(1, 2));
-                        textField.positionCaret(textField.getText().length() - 1);
+                        textField.positionCaret(1);
                     }
                 }
-                if(!game.checkNumberFoolProof(textField.getText())){
+
+                if(!game.checkNumberFoolProof(event.getCharacter())) {
                     textField.setText("");
                     game.unDoStackAdd(textFields);
                     return;
                 }
-                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #A1A1A1");
-                textField.setFont(new Fonts(40,"bold").getFont());
+                textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #A1A1A1;");
+                textField.setFont(new Fonts(50,"bold").getFont());
             }
             game.unDoStackAdd(textFields);
         });
@@ -239,7 +265,7 @@ public class GameController {
                     textField.setText(game.getNumberFromArray(game.getHintRowPosition(), game.getHintColumnPosition()) + "");
                     game.numberMatchedIn(game.getHintRowPosition(),game.getHintColumnPosition());
                     textField.setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
-                    textField.setFont(new Fonts(40,"bold").getFont());
+                    textField.setFont(new Fonts(50,"bold").getFont());
                     game.setScore(game.getScore() + 100, game.getHintRowPosition(), game.getHintColumnPosition());
                     lbScore.setText(game.getScore() + "");
                     if (game.verifyWinner()){

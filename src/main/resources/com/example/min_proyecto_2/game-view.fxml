@@ -10,48 +10,58 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.min_proyecto_2.controller.GameController">
+<AnchorPane prefHeight="810.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.min_proyecto_2.controller.GameController">
    <children>
-      <ImageView fitHeight="540.0" fitWidth="960.0" layoutX="3.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="810.0" fitWidth="1440.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@image/background_game.png" />
          </image>
       </ImageView>
-      <Label fx:id="lbStopWatch" alignment="CENTER" layoutX="694.0" layoutY="68.0" prefHeight="45.0" prefWidth="130.0" text="00:00" textFill="#916254">
+      <Circle fill="WHITE" layoutX="1044.0" layoutY="549.0" radius="47.0" stroke="TRANSPARENT" strokeType="INSIDE" />
+      <Circle fill="WHITE" layoutX="1177.0" layoutY="549.0" radius="47.0" stroke="TRANSPARENT" strokeType="INSIDE" />
+      <Circle fill="WHITE" layoutX="1296.0" layoutY="546.0" radius="47.0" stroke="TRANSPARENT" strokeType="INSIDE" />
+      <Circle fill="#b62f35" layoutX="1215.0" layoutY="509.0" radius="14.0" stroke="TRANSPARENT" strokeType="INSIDE" />
+      <Circle fill="#b62f35" layoutX="1330.0" layoutY="509.0" radius="14.0" stroke="TRANSPARENT" strokeType="INSIDE" />
+      <Label fx:id="lbStopWatch" alignment="CENTER" layoutX="1064.0" layoutY="104.0" prefHeight="64.0" prefWidth="179.0" text="00:00" textFill="#916254">
          <font>
-            <Font name="League Spartan Bold" size="40.0" />
+            <Font name="League Spartan Bold" size="60.0" />
          </font>
       </Label>
-      <Button fx:id="bGoBack" layoutX="19.0" layoutY="12.0" mnemonicParsing="false" onAction="#OnHandleBGoBack" prefHeight="39.0" prefWidth="40.0" style="-fx-border-radius: 1000; -fx-border-color: pink; -fx-background-color: white; -fx-background-radius: 1000;" text="&lt;" textFill="#eb9898">
+      <Button fx:id="bGoBack" layoutX="18.0" layoutY="35.0" mnemonicParsing="false" onAction="#OnHandleBGoBack" prefHeight="66.0" prefWidth="66.0" style="-fx-border-radius: 1000; -fx-background-color: white; -fx-background-radius: 1000; -fx-font-size: 20;" textFill="#eb9898">
          <font>
-            <Font name="League Spartan Bold" size="25.0" />
-         </font></Button>
-      <GridPane fx:id="sudokuGridPane" layoutX="78.0" layoutY="51.0" prefHeight="434.0" prefWidth="443.0">
+            <Font name="League Spartan Bold" size="26.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
+      <GridPane fx:id="sudokuGridPane" layoutX="152.0" layoutY="71.0" prefHeight="656.0" prefWidth="654.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="107.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="107.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="107.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="107.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="107.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="107.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="107.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="107.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="118.0" minHeight="10.0" prefHeight="114.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="106.0" minHeight="10.0" prefHeight="104.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="107.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="107.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <Label fx:id="lbScore" alignment="CENTER" layoutX="783.0" layoutY="245.0" prefHeight="45.0" prefWidth="93.0" text="0" textFill="#a82a2a">
+      <Label fx:id="lbScore" alignment="CENTER" layoutX="1194.0" layoutY="373.0" prefHeight="50.0" prefWidth="133.0" text="0" textFill="#992937">
          <font>
-            <Font name="League Spartan SemiBold" size="30.0" />
+            <Font name="League Spartan SemiBold" size="45.0" />
          </font>
       </Label>
-      <Button fx:id="btnUndoGame" layoutX="651.0" layoutY="337.0" mnemonicParsing="false" onAction="#onHandleBUndo" prefHeight="52.0" prefWidth="49.0" style="-fx-background-color: transparent;" textAlignment="CENTER">
+      <Button fx:id="btnUndoGame" layoutX="1001.0" layoutY="506.0" mnemonicParsing="false" onAction="#onHandleBUndo" prefHeight="87.0" prefWidth="87.0" style="-fx-background-color: transparent;" textAlignment="CENTER">
          <font>
             <Font name="League Spartan Bold" size="18.0" />
          </font>
@@ -61,12 +71,12 @@
          <effect>
             <ImageInput>
                <source>
-                  <Image url="@image/1.png" />
+                  <Image url="file:/C:/Users/Windows%2010%20Pro/IdeaProjects/min_Proyecto_2/src/main/resources/com/example/min_proyecto_2/image/1.png" />
                </source>
             </ImageInput>
          </effect>
       </Button>
-      <Button fx:id="btnNote" layoutX="736.0" layoutY="337.0" mnemonicParsing="false" onAction="#onHandleBNote" prefHeight="49.0" prefWidth="47.0" style="-fx-background-color: transparent;" text="Nota">
+      <Button fx:id="btnNote" layoutX="1133.0" layoutY="506.0" mnemonicParsing="false" onAction="#onHandleBNote" prefHeight="90.0" prefWidth="91.0" style="-fx-background-color: transparent;" text="Nota" textAlignment="JUSTIFY">
          <font>
             <Font name="League Spartan SemiBold" size="16.0" />
          </font>
@@ -81,7 +91,7 @@
             </ImageInput>
          </effect>
       </Button>
-      <Button fx:id="btnHint" layoutX="831.0" layoutY="340.0" mnemonicParsing="false" onAction="#onHandleBHint" prefHeight="48.0" prefWidth="44.0" style="-fx-background-color: transparent;" text="pista">
+      <Button fx:id="btnHint" layoutX="1251.0" layoutY="506.0" mnemonicParsing="false" onAction="#onHandleBHint" prefHeight="84.0" prefWidth="94.0" style="-fx-background-color: transparent;">
          <font>
             <Font name="League Spartan SemiBold" size="15.0" />
          </font>
@@ -96,20 +106,60 @@
             </ImageInput>
          </effect>
       </Button>
-      <Label fx:id="lbStatusNotes" alignment="CENTER" layoutX="784.0" layoutY="335.0" prefHeight="12.0" prefWidth="20.0" text="Off" textFill="WHITE">
-         <font>
-            <Font name="League Spartan SemiBold" size="9.0" />
-         </font>
-      </Label>
-      <Label fx:id="lbNumberHints" alignment="CENTER" layoutX="880.0" layoutY="334.0" prefHeight="14.0" prefWidth="11.0" text="3" textFill="WHITE">
+      <Label fx:id="lbStatusNotes" alignment="CENTER" layoutX="1205.0" layoutY="502.0" prefHeight="12.0" prefWidth="20.0" text="Off" textFill="WHITE">
          <font>
             <Font name="League Spartan SemiBold" size="12.0" />
          </font>
       </Label>
-      <ImageView fx:id="ivAttempts" fitHeight="95.0" fitWidth="93.0" layoutX="665.0" layoutY="229.0" pickOnBounds="true" preserveRatio="true">
+      <Label fx:id="lbNumberHints" alignment="CENTER" layoutX="1325.0" layoutY="498.0" prefHeight="14.0" prefWidth="11.0" text="3" textFill="WHITE">
+         <font>
+            <Font name="League Spartan SemiBold" size="20.0" />
+         </font>
+      </Label>
+      <ImageView fx:id="ivAttempts" fitHeight="141.0" fitWidth="168.0" layoutX="988.0" layoutY="332.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@vidas3.png" />
          </image>
       </ImageView>
+      <Label fx:id="lbScoreMessage" layoutX="1190.0" layoutY="426.0" text="Puntuación" textFill="#992937">
+         <font>
+            <Font name="League Spartan Bold" size="30.0" />
+         </font>
+      </Label>
+      <Label fx:id="lbAttempts" layoutX="1013.0" layoutY="426.0" text="Errores" textFill="#992937">
+         <font>
+            <Font name="League Spartan Bold" size="30.0" />
+         </font>
+      </Label>
+      <Label fx:id="lbUndo" layoutX="979.0" layoutY="594.0" prefHeight="34.0" prefWidth="125.0" text="Deshacer" textFill="#992937">
+         <font>
+            <Font name="League Spartan Bold" size="30.0" />
+         </font>
+      </Label>
+      <Label fx:id="lbNotes" layoutX="1133.0" layoutY="594.0" prefHeight="34.0" prefWidth="83.0" text="Notas" textFill="#992937">
+         <font>
+            <Font name="League Spartan Bold" size="30.0" />
+         </font>
+      </Label>
+      <Label fx:id="lbHint" layoutX="1256.0" layoutY="594.0" text="Pistas" textFill="#992937">
+         <font>
+            <Font name="League Spartan Bold" size="30.0" />
+         </font>
+      </Label>
+      <Line endX="-81.5" focusTraversable="true" layoutX="148.0" layoutY="69.0" startX="-108.5" stroke="#992937" strokeLineCap="ROUND" strokeWidth="5.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Line>
+      <Line endX="-88.5" endY="-11.5" focusTraversable="true" layoutX="137.0" layoutY="69.0" startX="-100.0" stroke="#992937" strokeLineCap="ROUND" strokeWidth="5.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Line>
+      <Line endX="-88.5" endY="-11.5" focusTraversable="true" layoutX="138.0" layoutY="81.0" rotate="-96.2" startX="-100.0" stroke="#992937" strokeLineCap="ROUND" strokeWidth="5.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Line>
    </children>
 </AnchorPane>

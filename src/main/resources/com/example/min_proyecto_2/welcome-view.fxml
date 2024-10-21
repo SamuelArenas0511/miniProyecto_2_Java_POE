@@ -7,75 +7,83 @@
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="gridPaneWelcome" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.min_proyecto_2.controller.WelcomeController">
-  <columnConstraints>
-    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints maxHeight="218.0" minHeight="0.0" prefHeight="160.0" valignment="CENTER" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="401.0" minHeight="10.0" prefHeight="363.0" valignment="CENTER" vgrow="NEVER" />
-  </rowConstraints>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.min_proyecto_2.controller.WelcomeController">
    <children>
-      <Button fx:id="btnContinueGame" alignment="CENTER" layoutY="270.0" mnemonicParsing="false" onAction="#handleContinueButton" prefHeight="69.0" prefWidth="327.0" style="-fx-border-width: 10; -fx-border-radius: 100; -fx-background-radius: 100; -fx-background-color: #538CC4;" text="Continuar" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
-         <font>
-            <Font name="League Spartan SemiBold" size="25.0" />
-         </font>
-         <GridPane.margin>
-            <Insets bottom="120.0" />
-         </GridPane.margin>
-         <effect>
-            <DropShadow blurType="GAUSSIAN" spread="0.38">
-               <color>
-                  <Color opacity="0.25" />
-               </color>
-            </DropShadow>
-         </effect>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-         <padding>
-            <Insets bottom="10.0" />
-         </padding>
-      </Button>
-      <ImageView fitHeight="132.0" fitWidth="420.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="540.0" fitWidth="960.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@image/background_welcomestage.png" />
+            <Image url="@image/background_welcome.png" />
          </image>
-         <GridPane.margin>
-            <Insets top="20.0" />
-         </GridPane.margin>
       </ImageView>
-      <Button fx:id="btnNewGame" mnemonicParsing="false" onAction="#handlePlayButton" prefHeight="69.0" prefWidth="327.0" style="-fx-border-width: 10; -fx-border-radius: 100; -fx-background-radius: 100; -fx-background-color: white;" text="Nueva Partida" textFill="#538cc4" GridPane.rowIndex="1">
-         <font>
-            <Font name="League Spartan SemiBold" size="25.0" />
-         </font>
-         <effect>
-            <DropShadow blurType="GAUSSIAN" spread="0.39">
-               <color>
-                  <Color opacity="0.25" />
-               </color>
-            </DropShadow>
-         </effect>
-         <GridPane.margin>
-            <Insets top="70.0" />
-         </GridPane.margin>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Button>
-      <Label fx:id="lbTime" text="Time: 00:00" textFill="#ffffffa6" GridPane.rowIndex="1">
-         <font>
-            <Font name="League Spartan SemiBold" size="10.0" />
-         </font>
-         <GridPane.margin>
-            <Insets bottom="90.0" />
-         </GridPane.margin>
-      </Label>
+      <GridPane fx:id="gridPaneWelcome" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" style="-fx-background-color: transparent;">
+         <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="218.0" minHeight="0.0" prefHeight="160.0" valignment="CENTER" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="401.0" minHeight="10.0" prefHeight="363.0" valignment="CENTER" vgrow="NEVER" />
+         </rowConstraints>
+         <Button fx:id="btnContinueGame" alignment="CENTER" layoutY="270.0" mnemonicParsing="false" onAction="#handleContinueButton" prefHeight="69.0" prefWidth="327.0" style="-fx-border-width: 10; -fx-border-radius: 100; -fx-background-radius: 100; -fx-background-color: #538CC4;" text="Continuar" textAlignment="CENTER" textFill="WHITE" GridPane.rowIndex="1">
+            <font>
+               <Font name="League Spartan SemiBold" size="25.0" />
+            </font>
+            <effect>
+               <DropShadow blurType="GAUSSIAN" spread="0.38">
+                  <color>
+                     <Color opacity="0.25" />
+                  </color>
+               </DropShadow>
+            </effect>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+            <padding>
+               <Insets bottom="10.0" />
+            </padding>
+            <GridPane.margin>
+               <Insets bottom="120.0" />
+            </GridPane.margin>
+         </Button>
+         <ImageView fitHeight="132.0" fitWidth="420.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@image/background_welcomestage.png" />
+            </image>
+            <GridPane.margin>
+               <Insets top="20.0" />
+            </GridPane.margin>
+         </ImageView>
+         <Button fx:id="btnNewGame" mnemonicParsing="false" onAction="#handlePlayButton" prefHeight="69.0" prefWidth="327.0" style="-fx-border-width: 10; -fx-border-radius: 100; -fx-background-radius: 100; -fx-background-color: white;" text="Nueva Partida" textFill="#538cc4" GridPane.rowIndex="1">
+            <font>
+               <Font name="League Spartan SemiBold" size="25.0" />
+            </font>
+            <effect>
+               <DropShadow blurType="GAUSSIAN" spread="0.39">
+                  <color>
+                     <Color opacity="0.25" />
+                  </color>
+               </DropShadow>
+            </effect>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+            <GridPane.margin>
+               <Insets top="70.0" />
+            </GridPane.margin>
+         </Button>
+         <Label fx:id="lbTime" text="Time: 00:00" textFill="#ffffffa6" GridPane.rowIndex="1">
+            <font>
+               <Font name="League Spartan SemiBold" size="10.0" />
+            </font>
+            <GridPane.margin>
+               <Insets bottom="90.0" />
+            </GridPane.margin>
+         </Label>
+      </GridPane>
    </children>
-</GridPane>
+</AnchorPane>
