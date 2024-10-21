@@ -1,0 +1,33 @@
+.alert {
+    -fx-background-color: #ffffff; /* Fondo blanco */
+    -fx-border-width: 2px; /* Ancho del borde */
+    -fx-font-family: "Yu Gothic UI", "Segoe UI", sans-serif; /* Fuente moderna y limpia */
+    -fx-font-size: 18px; /* Tamaño de fuente */
+    -fx-text-fill: #c0392b; /* Texto rojo */
+    -fx-padding: 15px; /* Espaciado interno */
+}
+
+/* Estilo del título de la alerta */
+.alert .header {
+    -fx-font-size: 20px; /* Tamaño de fuente del encabezado */
+    -fx-text-fill: green; /* Texto de encabezado más oscuro */
+}
+
+.alert .content {
+    -fx-text-fill: #302F2F;
+}
+
+/* Botones de alerta */
+.button {
+    -fx-background-color: #e74c3c; /* Fondo rojo */
+    -fx-text-fill: #ffffff; /* Texto blanco */
+    -fx-font-weight: bold; /* Texto en negrita */
+    -fx-padding: 10px; /* Espaciado interno */
+    -fx-background-radius: 5px; /* Bordes redondeados */
+}
+
+/* Efecto al pasar el mouse sobre los botones */
+.button:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #c0392b; /* Color más oscuro al pasar el mouse */
+}
