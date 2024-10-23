@@ -1,5 +1,6 @@
 package com.example.min_proyecto_2.controller;
 
+import com.example.min_proyecto_2.Sounds;
 import com.example.min_proyecto_2.model.font.Fonts;
 import com.example.min_proyecto_2.model.gameLogic.AGameLogic;
 import com.example.min_proyecto_2.model.gameLogic.GameLogic;
@@ -92,6 +93,7 @@ public class GameController {
 
     private MatrixCreator matrixCreator;
     private GameLogic game;
+    private Sounds yeii;
 
     public void initialize() {
 
@@ -109,6 +111,8 @@ public class GameController {
         game = new GameLogic();
         textFields = new TextField[6][6];
         isGameFinished = false;
+        yeii = new Sounds();
+        yeii.loadSound("src/main/resources/com/example/min_proyecto_2/yeii.wav");
 
         game.setAttempts(3);
         isStopWatchOn = false;
@@ -169,6 +173,7 @@ public class GameController {
                         for (int k = 0; k<250;k++){
                             createConfetti(anchorPaneGame, anchorPaneGame.getLayoutX(), anchorPaneGame.getLayoutY());
                         }
+                        yeii.playSound();
 
                     }
                     game.setScore(game.getScore() + 100, i, j);
