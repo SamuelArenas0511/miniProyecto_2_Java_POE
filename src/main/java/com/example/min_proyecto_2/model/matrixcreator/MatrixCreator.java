@@ -2,7 +2,7 @@ package com.example.min_proyecto_2.model.matrixcreator;
 
 import java.util.Random;
 
-public class MatrixCreator implements IMatrixCreator {
+public class MatrixCreator extends AMatrixCreator {
 
     private final int[][] matrix = new int[6][6];
 

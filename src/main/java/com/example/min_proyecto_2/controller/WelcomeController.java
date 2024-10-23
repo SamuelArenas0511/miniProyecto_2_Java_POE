@@ -8,8 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import org.w3c.dom.Text;
+import org.w3c.dom.css.RGBColor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,6 +62,8 @@ public class WelcomeController {
         }
         WelcomeStage.deleteInstance();
 
+
+
     }
 
     @FXML
@@ -74,5 +79,28 @@ public class WelcomeController {
         WelcomeStage.deleteInstance();
 
     }
+
+    @FXML
+    void onHandleEnteredBtnContinue(MouseEvent event) {
+        btnContinueGame.setStyle("-fx-background-color: #992937; -fx-background-radius: 100; -fx-border-radius: 100; -fx-border-width: 10; -fx-text-fill:  white");
+        lbTime.setTextFill(Color.rgb(255,255,255,0.7));
+    }
+
+    @FXML
+    void onHandleExitedBtnContinue(MouseEvent event) {
+        btnContinueGame.setStyle("-fx-background-color: #b62f35; -fx-background-radius: 100; -fx-border-radius: 100; -fx-border-width: 10; -fx-text-fill:  white");
+        lbTime.setTextFill(Color.rgb(255,255,255,0.65));
+    }
+
+    @FXML
+    void onHandleEnteredBtnNewGame(MouseEvent event) {
+        btnNewGame.setStyle("-fx-background-color: #fafafa ; -fx-background-radius: 100; -fx-border-radius: 100; -fx-border-width: 10; -fx-text-fill:  #b62f35");
+    }
+
+    @FXML
+    void onHandleExitedBtnNewGame(MouseEvent event) {
+        btnNewGame.setStyle("-fx-background-color: white; -fx-background-radius: 100; -fx-border-radius: 100; -fx-border-width: 10; -fx-text-fill:  #b62f35");
+    }
+
 
 }

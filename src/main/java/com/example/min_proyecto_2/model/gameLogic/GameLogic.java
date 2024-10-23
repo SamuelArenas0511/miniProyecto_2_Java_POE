@@ -1,26 +1,27 @@
-package com.example.min_proyecto_2.model.game;
+package com.example.min_proyecto_2.model.gameLogic;
 
 import com.example.min_proyecto_2.model.matrixcreator.MatrixCreator;
 import javafx.scene.control.TextField;
 
-import java.io.IOException;
 import java.util.Stack;
 
-public class Game implements IGame{
+public class GameLogic extends AGameLogic {
     
-    int[][] matchedNumbers;
-    int[][] scoredNumbers;
-    int[][] matrix;
+    private int[][] matchedNumbers;
+    private int[][] scoredNumbers;
+    private int[][] matrix;
     private Stack<int[][]> unDoStackAction;
-    int score;
-    int attempts;
-    int hintRowPosition = 0;
-    int hintColumnPosition = 0;
+    private Stack<String[][]> unDoStackActionStyle;
+    private int score;
+    private int attempts;
+    private int hintRowPosition = 0;
+    private int hintColumnPosition = 0;
     
-    public Game() {
+    public GameLogic() {
         matchedNumbers = new int[6][6];
         matrix = new int[6][6];
         unDoStackAction = new Stack<>();
+        unDoStackActionStyle = new Stack<>();
         scoredNumbers = new int[6][6];
     }
     @Override
@@ -142,6 +143,7 @@ public class Game implements IGame{
 
     public void unDoStackAdd(TextField[][] textFields) {
         int[][] copyTextFields = new int[6][6];
+        String[][] copyTextFieldsStyle = new String[6][6];
         for(int i = 0; i < textFields.length; i++){
             for(int j = 0; j < textFields[i].length; j++){
                 if(!textFields[i][j].getText().equals("")) {
@@ -156,17 +158,24 @@ public class Game implements IGame{
                 else{
                     copyTextFields[i][j] = 0;
                 }
+                copyTextFieldsStyle[i][j] = textFields[i][j].getStyle();
             }
         }
         unDoStackAction.add(copyTextFields);
+        unDoStackActionStyle.add(copyTextFieldsStyle);
     }
 
     public void unDoStackPop(){
         unDoStackAction.pop();
+        unDoStackActionStyle.pop();
     }
 
     public Stack<int[][]> getUnDoStackAction(){
         return unDoStackAction;
+    }
+
+    public Stack<String[][]> getUnDoStackActionStyle(){
+        return unDoStackActionStyle;
     }
 
     public int getHintRowPosition() {
@@ -183,5 +192,9 @@ public class Game implements IGame{
 
     public int[][] getMatchedNumbers() {
         return matchedNumbers;
+    }
+
+    public int[][] getScoredNumbers(){
+        return scoredNumbers;
     }
 }

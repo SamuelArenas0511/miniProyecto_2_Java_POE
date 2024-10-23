@@ -1,12 +1,12 @@
 package com.example.min_proyecto_2.controller;
 
 import com.example.min_proyecto_2.model.font.Fonts;
-import com.example.min_proyecto_2.model.game.Game;
+import com.example.min_proyecto_2.model.gameLogic.AGameLogic;
+import com.example.min_proyecto_2.model.gameLogic.GameLogic;
 import com.example.min_proyecto_2.model.matrixcreator.MatrixCreator;
 import com.example.min_proyecto_2.view.GameStage;
 import com.example.min_proyecto_2.view.WelcomeStage;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -17,20 +17,25 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 
 public class GameController {
+
+
+    @FXML
+    private AnchorPane anchorPaneGame;
 
     @FXML
     private Label lbNumberHints;
@@ -86,7 +91,7 @@ public class GameController {
     private TextField[][] textFields;
 
     private MatrixCreator matrixCreator;
-    private Game game;
+    private GameLogic game;
 
     public void initialize() {
 
@@ -101,7 +106,7 @@ public class GameController {
         lbHint.setFont(new Fonts(20, "bold").getFont());
 
         matrixCreator = new MatrixCreator();
-        game = new Game();
+        game = new GameLogic();
         textFields = new TextField[6][6];
         isGameFinished = false;
 
@@ -122,7 +127,7 @@ public class GameController {
                 textFields[i][j].setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #916254;");
                 textFields[i][j].setPrefHeight(107);
                 textFields[i][j].setPrefWidth(107);
-                textFields[i][j].setFont(new Fonts(40,"bold").getFont());
+                textFields[i][j].setFont(new Fonts(38,"bold").getFont());
                 textFields[i][j].setAlignment(Pos.CENTER);
                 if(matrixCreator.getStartingNumbers()[i][j] == 1){
                     textFields[i][j].setText(matrixCreator.getMatrix()[i][j] + "");
@@ -153,134 +158,96 @@ public class GameController {
     private void onHandleEntryTxt(TextField textField, int i, int j) {
         textField.setOnKeyTyped(event -> {
             if(!statusNotes && textField.isEditable()){
-
-                if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
-                    if(textField.getText().substring(0,1).equals(textField.getText().substring(1,2))){
-                        textField.setText("");
-                    }else {
-                        textField.setText(textField.getText().substring(1, 2));
-                        textField.positionCaret(1);
-                    }
-                }
-
-                if(!game.checkNumberFoolProof(textField.getText())){
-                    textField.setText("");
-                    game.updateMatchedNumbers(textFields);
-                    game.unDoStackAdd(textFields);
+                if(handleTextEntered(textField)){
                     return;
                 }
-
                 game.updateMatchedNumbers(textFields);
-
                 if(game.isNumberCorrect(event.getCharacter(), i, j)) {
-                    textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
-                    textField.setFont(new Fonts(40,"bold").getFont());
+                    styleForCorrectNumber(textField);
+                    if(game.getScoredNumbers()[i][j] == 0){
+                        applyZoomEffect(lbScore);
+                        for (int k = 0; k<250;k++){
+                            createConfetti(anchorPaneGame, anchorPaneGame.getLayoutX(), anchorPaneGame.getLayoutY());
+                        }
+
+                    }
                     game.setScore(game.getScore() + 100, i, j);
                     lbScore.setText(game.getScore() + "");
                     if (game.verifyWinner()){
-                        timeline.stop();
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("¡VICTORIA!");
-                        alert.setHeaderText(null);
-
-                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                        stage.getIcons().add(
-                                new Image(this.getClass().getResource("/com/example/min_proyecto_2/image/trofeo.png").toString()));
-
-                        alert.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/min_proyecto_2/image/trofeo.png")))));
-                        alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/min_proyecto_2/Style/style.css")).toExternalForm());
-
-                        Text congratulatoryText = new Text("¡Felicidades, has ganado! \n");
-                        Text scoreText = new Text("Puntaje Total: " + game.getScore() + "\n");
-                        Text timeText = new Text("Tiempo Realizado: " + lbStopWatch.getText());
-
-                        congratulatoryText.setFill(Color.rgb(48, 47, 47));
-                        congratulatoryText.setStyle("-fx-font-weight: bold");
-                        scoreText.setFill(Color.rgb(41, 80, 125));
-                        timeText.setFill(Color.rgb(41, 80, 125));
-
-                        TextFlow textFlow = new TextFlow(congratulatoryText, scoreText, timeText);
-                        textFlow.setStyle("-fx-padding: 15px;");
-
-
-                        alert.getDialogPane().setContent(textFlow);
-
-                        alert.showAndWait();
-                        isGameFinished = true;
-                        try {
-                            GameStage.getInstance().closeInstance();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        try {
-                            WelcomeStage.getInstance();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    };
-                }else{
-                        textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #9c4040");
-                        textField.setFont(new Fonts(40,"bold").getFont());
-                        game.setAttempts(game.getAttempts() - 1);
-                        ivAttempts.setImage(new Image(String.valueOf(getClass().getResource("/com/example/min_proyecto_2/vidas" + game.getAttempts() + ".png"))));
-
-                        if (game.checkLostGame()){
-                            timeline.stop();
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.setTitle("¡Perdiste!");
-                            alert.setHeaderText(null);
-
-                            ButtonType customButton = new ButtonType("Intentar Nuevamente", ButtonBar.ButtonData.OK_DONE);
-
-                            alert.getButtonTypes().setAll(customButton);
-
-                            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                            stage.getIcons().add(
-                                    new Image(this.getClass().getResource("/com/example/min_proyecto_2/image/lost.png").toString()));
-
-                            alert.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/min_proyecto_2/image/lost.png")))));
-                            alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/min_proyecto_2/Style/style.css")).toExternalForm());
-
-                            Text titleText = new Text("Juego Finalizado \n");
-                            Text lostText = new Text("Se han acabado los intentos :( \n");
-                            Text timeText = new Text("Tiempo Alcanzado: " + lbStopWatch.getText());
-
-                            titleText.setFill(Color.BLACK);
-                            titleText.setStyle("-fx-font-weight: bold");
-                            lostText.setFill(Color.rgb(48, 47, 47));
-                            timeText.setFill(Color.rgb(48, 47, 47));
-
-                            TextFlow textFlow = new TextFlow(titleText, lostText,timeText);
-                            textFlow.setStyle("-fx-padding: 15px; -fx-text-alignment: center");
-
-
-                            alert.getDialogPane().setContent(textFlow);
-
-                             alert.showAndWait();
-
-                             restartGame();
-
-                        }
+                        handleGameWon();
                     }
-            }else if(statusNotes && textField.isEditable()){
-                if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
-                    if(textField.getText().substring(0,1).equals(textField.getText().substring(1,2))){
-                        textField.setText("");
-                    }else {
-                        textField.setText(textField.getText().substring(1, 2));
-                        textField.positionCaret( 1);
+                }else{
+                    styleForIncorrectNumber(textField);
+
+                    applyShakeEffect(textField,ivAttempts);
+                    game.setAttempts(game.getAttempts() - 1);
+                    ivAttempts.setImage(new Image(String.valueOf(getClass().getResource("/com/example/min_proyecto_2/vidas" + game.getAttempts() + ".png"))));
+                    if (game.checkLostGame()){
+                        handleGameLost();
                     }
                 }
-                if(!game.checkNumberFoolProof(textField.getText())){
-                    textField.setText("");
-                    game.unDoStackAdd(textFields);
+            }else if(statusNotes && textField.isEditable()){
+                if(handleTextEntered(textField)){
                     return;
                 }
-                textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #585959");
-                textField.setFont(new Fonts(40,"bold").getFont());
+                styleForNotes(textField);
             }
             game.unDoStackAdd(textFields);
         });
+    }
+
+    private void applyShakeEffect(TextField textField, ImageView imageView) {
+        TranslateTransition transition = new TranslateTransition(Duration.millis(50), textField);
+        transition.setFromX(0);
+        transition.setByX(10);
+        transition.setCycleCount(6);
+        transition.setAutoReverse(true);
+        transition.play();
+
+        TranslateTransition transition2 = new TranslateTransition(Duration.millis(50), imageView);
+        transition2.setFromX(0);
+        transition2.setByX(10);
+        transition2.setCycleCount(6);
+        transition2.setAutoReverse(true);
+        transition2.play();
+    }
+
+    private void applyZoomEffect(Label label) {
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200), label);
+        scaleTransition.setFromX(1.0);
+        scaleTransition.setFromY(1.0);
+        scaleTransition.setToX(1.4);
+        scaleTransition.setToY(1.4);
+        scaleTransition.setCycleCount(2);
+        scaleTransition.setAutoReverse(true);
+        scaleTransition.play();
+    }
+
+    private void createConfetti(Pane pane, double startX, double startY) {
+        Random random = new Random();
+
+        // Crear un círculo pequeño que será el confeti
+        Rectangle confetti = new Rectangle(random.nextInt(5)+2,random.nextInt(5)+2, getRandomColor());
+        confetti.setLayoutX(startX + random.nextInt(1000)); // Posición inicial cercana al TextField
+        confetti.setLayoutY(startY);
+
+        pane.getChildren().add(confetti);
+
+        // Obtener la altura de la ventana (el Pane) para que el confeti caiga hasta el final
+        double paneHeight = pane.getHeight();
+
+        // Animación para que el confeti caiga de forma fluida hasta el final de la pantalla
+        TranslateTransition transition = new TranslateTransition(Duration.seconds(random.nextDouble(7)+2), confetti);
+        transition.setByY(paneHeight - startY); // Caída hasta el final de la pantalla
+        transition.setByX(random.nextInt(200) - 25); // Movimiento lateral aleatorio
+        transition.setInterpolator(Interpolator.LINEAR); // Movimiento suave y constante
+        transition.setOnFinished(e -> pane.getChildren().remove(confetti)); // Eliminar confeti cuando caiga
+        transition.play();
+    }
+
+    private Color getRandomColor() {
+        Random random = new Random();
+        return Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
     }
 
     private void stopWatch() {
@@ -319,7 +286,7 @@ public class GameController {
                             textFields[i][j].setBackground((new Background(new BackgroundFill(Color.rgb(199, 181, 175, 0.2), CornerRadii.EMPTY, null))));
                         }
                     }
-                    textField.setBackground((new Background(new BackgroundFill(Color.rgb(199, 181, 175, 0.5), CornerRadii.EMPTY, null))));
+                    textField.setBackground((new Background(new BackgroundFill(Color.rgb(199, 181, 175, 0.6), CornerRadii.EMPTY, null))));
                 } else {
                     for(int i = 0; i < textFields.length; i++){
                         textFields[fil][i].setBackground((new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, null))));
@@ -354,70 +321,17 @@ public class GameController {
                     textField.setText(game.getNumberFromArray(game.getHintRowPosition(), game.getHintColumnPosition()) + "");
                     game.numberMatchedIn(game.getHintRowPosition(),game.getHintColumnPosition());
                     textField.setBackground((new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, null))));
-                    textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
-                    textField.setFont(new Fonts(40,"bold").getFont());
+                    styleForCorrectNumber(textField);
                     game.setScore(game.getScore() + 100, game.getHintRowPosition(), game.getHintColumnPosition());
                     lbScore.setText(game.getScore() + "");
                     if (game.verifyWinner()){
-                        timeline.stop();
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("¡VICTORIA!");
-                        alert.setHeaderText(null);
-
-                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                        stage.getIcons().add(
-                                new Image(this.getClass().getResource("/com/example/min_proyecto_2/image/trofeo.png").toString()));
-
-                        alert.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/min_proyecto_2/image/trofeo.png")))));
-                        alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/min_proyecto_2/Style/style.css")).toExternalForm());
-
-                        Text congratulatoryText = new Text("¡Felicidades, has ganado! \n");
-                        Text scoreText = new Text("Puntaje Total: " + game.getScore() + "\n");
-                        Text timeText = new Text("Tiempo Realizado: " + lbStopWatch.getText());
-
-                        congratulatoryText.setFill(Color.rgb(48, 47, 47));
-                        congratulatoryText.setStyle("-fx-font-weight: bold");
-                        scoreText.setFill(Color.rgb(41, 80, 125));
-                        timeText.setFill(Color.rgb(41, 80, 125));
-
-                        TextFlow textFlow = new TextFlow(congratulatoryText, scoreText, timeText);
-                        textFlow.setStyle("-fx-padding: 15px;");
-
-
-                        alert.getDialogPane().setContent(textFlow);
-
-                        alert.showAndWait();
-                        isGameFinished = true;
-                        try {
-                            GameStage.getInstance().closeInstance();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        try {
-                            WelcomeStage.getInstance();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-
+                        handleGameWon();
                     };
                 }
             }
             game.unDoStackAdd(textFields);
         }else{
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("¡Sin pistas!");
-            alert.setHeaderText(null);
-
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.getIcons().add(
-                    new Image(this.getClass().getResource("/com/example/min_proyecto_2/image/sinPista.png").toString()));
-
-
-            alert.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/min_proyecto_2/image/sinPista.png")))));
-            alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/min_proyecto_2/Style/style.css")).toExternalForm());
-
-            alert.setContentText("¡Te quedaste sin pistas! :(");
-            alert.showAndWait();
+            hintAlert();
         }
 
     }
@@ -444,12 +358,7 @@ public class GameController {
                     }
                     else {
                         textFields[i][j].setText(String.valueOf(game.getUnDoStackAction().peek()[i][j]));
-                        if(game.getUnDoStackAction().peek()[i][j] == matrixCreator.getMatrix()[i][j] && matrixCreator.getStartingNumbers()[i][j] == 0){
-                            if(!textFields[i][j].getStyle().contains("-fx-text-fill: #A1A1A1")) {
-                                textFields[i][j].setStyle("-fx-background-color: TRANSPARENT; -fx-border-color: TRANSPARENT; -fx-text-fill: #29677d");
-                                textFields[i][j].setFont(new Fonts(40, "bold").getFont());
-                            }
-                        }
+                        textFields[i][j].setStyle(game.getUnDoStackActionStyle().peek()[i][j]);
                     }
                 }
             }
@@ -466,6 +375,7 @@ public class GameController {
             }
         }
         game.getUnDoStackAction().clear();
+        game.getUnDoStackActionStyle().clear();
         game.restartScore();
         game.updateMatchedNumbers(textFields);
         seconds = 0;
@@ -487,6 +397,12 @@ public class GameController {
         GameStage.getInstance().closeInstance();
         timeline.stop();
     }
+    @FXML
+    void OnHandleBGoBack2(MouseEvent event) throws IOException {
+        WelcomeStage.getInstance();
+        GameStage.getInstance().closeInstance();
+        timeline.stop();
+    }
 
     public String getGameTime() {
         return lbStopWatch.getText();
@@ -494,5 +410,135 @@ public class GameController {
 
     public boolean getIsGameFinished() {
         return isGameFinished;
+    }
+
+    public void styleForCorrectNumber(TextField textField){
+        textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
+        textField.setFont(new Fonts(38,"bold").getFont());
+    }
+
+    public void handleGameWon(){
+        timeline.stop();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("¡VICTORIA!");
+        alert.setHeaderText(null);
+
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(
+                new Image(this.getClass().getResource("/com/example/min_proyecto_2/image/trofeo.png").toString()));
+
+        alert.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/min_proyecto_2/image/trofeo.png")))));
+        alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/min_proyecto_2/Style/style.css")).toExternalForm());
+
+        Text congratulatoryText = new Text("¡Felicidades, has ganado! \n");
+        Text scoreText = new Text("Puntaje Total: " + game.getScore() + "\n");
+        Text timeText = new Text("Tiempo Realizado: " + lbStopWatch.getText());
+
+        congratulatoryText.setFill(Color.rgb(48, 47, 47));
+        congratulatoryText.setStyle("-fx-font-weight: bold");
+        scoreText.setFill(Color.rgb(41, 80, 125));
+        timeText.setFill(Color.rgb(41, 80, 125));
+
+        TextFlow textFlow = new TextFlow(congratulatoryText, scoreText, timeText);
+        textFlow.setStyle("-fx-padding: 15px;");
+
+
+        alert.getDialogPane().setContent(textFlow);
+
+        alert.showAndWait();
+        isGameFinished = true;
+        try {
+            GameStage.getInstance().closeInstance();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            WelcomeStage.getInstance();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void handleGameLost(){
+        timeline.stop();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("¡Perdiste!");
+        alert.setHeaderText(null);
+
+        ButtonType customButton = new ButtonType("Intentar Nuevamente", ButtonBar.ButtonData.OK_DONE);
+
+        alert.getButtonTypes().setAll(customButton);
+
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(
+                new Image(this.getClass().getResource("/com/example/min_proyecto_2/image/lost.png").toString()));
+
+        alert.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/min_proyecto_2/image/lost.png")))));
+        alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/min_proyecto_2/Style/style.css")).toExternalForm());
+
+        Text titleText = new Text("Juego Finalizado \n");
+        Text lostText = new Text("Se han acabado los intentos :( \n");
+        Text timeText = new Text("Tiempo Alcanzado: " + lbStopWatch.getText());
+
+        titleText.setFill(Color.BLACK);
+        titleText.setStyle("-fx-font-weight: bold");
+        lostText.setFill(Color.rgb(48, 47, 47));
+        timeText.setFill(Color.rgb(48, 47, 47));
+
+        TextFlow textFlow = new TextFlow(titleText, lostText,timeText);
+        textFlow.setStyle("-fx-padding: 15px; -fx-text-alignment: center");
+
+
+        alert.getDialogPane().setContent(textFlow);
+
+        alert.showAndWait();
+
+        restartGame();
+    }
+
+    public boolean handleTextEntered(TextField textField){
+        if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
+            if(textField.getText().substring(0,1).equals(textField.getText().substring(1,2))){
+                textField.setText("");
+            }else {
+                textField.setText(textField.getText().substring(1, 2));
+                textField.positionCaret(1);
+            }
+        }
+
+        if(!game.checkNumberFoolProof(textField.getText())){
+            textField.setText("");
+            game.updateMatchedNumbers(textFields);
+            game.unDoStackAdd(textFields);
+            return true;
+        }
+        return false;
+    }
+
+    public void styleForIncorrectNumber(TextField textField){
+        textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #9c4040");
+        textField.setFont(new Fonts(38,"bold").getFont());
+    }
+
+    public void styleForNotes(TextField textField){
+        textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #585959");
+        textField.setFont(new Fonts(38,"bold").getFont());
+    }
+
+    public void hintAlert(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("¡Sin pistas!");
+        alert.setHeaderText(null);
+
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(
+                new Image(this.getClass().getResource("/com/example/min_proyecto_2/image/sinPista.png").toString()));
+
+
+        alert.setGraphic(new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/min_proyecto_2/image/sinPista.png")))));
+        alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/min_proyecto_2/Style/style.css")).toExternalForm());
+
+        alert.setContentText("¡Te quedaste sin pistas! :(");
+        alert.showAndWait();
     }
 }
