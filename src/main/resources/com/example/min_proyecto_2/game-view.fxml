@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.min_proyecto_2.controller.GameController">
+<AnchorPane fx:id="anchorPaneGame" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.min_proyecto_2.controller.GameController">
    <children>
       <ImageView fitHeight="540.0" fitWidth="960.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -99,21 +99,21 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <GridPane fx:id="sudokuGridPane" alignment="CENTER" layoutX="102.0" layoutY="50.33333333333337" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="438.0" prefWidth="438.0" snapToPixel="false" AnchorPane.bottomAnchor="56.333333333333314">
+      <GridPane fx:id="sudokuGridPane" alignment="CENTER" layoutX="99.0" layoutY="53.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="433.0" prefWidth="443.0" snapToPixel="false" AnchorPane.bottomAnchor="56.0">
         <columnConstraints>
-          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="71.33334350585938" />
-          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="73.33334350585938" />
-            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="70.99998474121094" />
-            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="73.33338928222656" />
-            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="72.6666259765625" />
-            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="76.33331298828125" />
+          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="69.33334350585938" />
+          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="75.00003051757812" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="72.99992370605469" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="74.33338928222653" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="71.33331298828125" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="107.0" minWidth="10.0" prefWidth="76.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints fillHeight="false" maxHeight="192.0" minHeight="0.0" prefHeight="70.00000762939453" valignment="CENTER" />
-          <RowConstraints fillHeight="false" maxHeight="192.0" minHeight="0.0" prefHeight="70.66661834716797" valignment="CENTER" />
-          <RowConstraints fillHeight="false" maxHeight="175.99999999999997" minHeight="0.0" prefHeight="79.99999999999997" valignment="CENTER" />
-            <RowConstraints fillHeight="false" maxHeight="175.99999999999997" minHeight="0.0" prefHeight="72.00006103515625" valignment="CENTER" />
-            <RowConstraints fillHeight="false" maxHeight="107.0" minHeight="0.0" prefHeight="72.66665649414062" valignment="CENTER" />
+          <RowConstraints fillHeight="false" maxHeight="192.0" minHeight="0.0" prefHeight="65.66667938232422" valignment="CENTER" />
+          <RowConstraints fillHeight="false" maxHeight="192.0" minHeight="0.0" prefHeight="71.33329010009766" valignment="CENTER" />
+          <RowConstraints fillHeight="false" maxHeight="175.99999999999997" minHeight="0.0" prefHeight="81.99999999999997" valignment="CENTER" />
+            <RowConstraints fillHeight="false" maxHeight="175.99999999999997" minHeight="0.0" prefHeight="69.33340454101565" valignment="CENTER" />
+            <RowConstraints fillHeight="false" maxHeight="107.0" minHeight="0.0" prefHeight="73.99996948242188" valignment="CENTER" />
             <RowConstraints fillHeight="false" maxHeight="107.0" minHeight="10.0" prefHeight="68.66665649414062" valignment="CENTER" />
         </rowConstraints>
       </GridPane>
@@ -137,7 +137,7 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <Label fx:id="lbUndo" layoutX="658.0" layoutY="400.0" prefHeight="5.0" prefWidth="87.0" text="Deshacer" textFill="#992937">
+      <Label fx:id="lbUndo" layoutX="658.0" layoutY="402.0" prefHeight="5.0" prefWidth="87.0" text="Deshacer" textFill="#992937">
          <font>
             <Font size="20.0" />
          </font>
@@ -147,22 +147,22 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <Label fx:id="lbHint" layoutX="839.0" layoutY="400.0" prefHeight="7.0" prefWidth="50.0" text="Pistas" textFill="#992937">
+      <Label fx:id="lbHint" layoutX="839.0" layoutY="400.0" prefHeight="30.0" prefWidth="60.0" text="Pistas" textFill="#992937">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Line endX="-87.0" endY="-3.814697265625E-6" focusTraversable="true" layoutX="136.0" layoutY="51.0" startX="-108.5" stroke="#992937" strokeLineCap="ROUND" strokeWidth="5.0">
+      <Line endX="-87.0" endY="-3.814697265625E-6" focusTraversable="true" layoutX="136.0" layoutY="51.0" onMouseClicked="#OnHandleBGoBack2" startX="-108.5" stroke="#992937" strokeLineCap="ROUND" strokeWidth="5.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </Line>
-      <Line endX="-88.5" endY="-11.5" focusTraversable="true" layoutX="125.0" layoutY="51.0" startX="-100.0" stroke="#992937" strokeLineCap="ROUND" strokeWidth="5.0">
+      <Line endX="-88.5" endY="-11.5" focusTraversable="true" layoutX="125.0" layoutY="51.0" onMouseClicked="#OnHandleBGoBack2" startX="-100.0" stroke="#992937" strokeLineCap="ROUND" strokeWidth="5.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </Line>
-      <Line endX="-88.5" endY="-11.5" focusTraversable="true" layoutX="126.0" layoutY="63.0" rotate="-96.2" startX="-100.0" stroke="#992937" strokeLineCap="ROUND" strokeWidth="5.0">
+      <Line endX="-88.5" endY="-11.5" focusTraversable="true" layoutX="126.0" layoutY="63.0" onMouseClicked="#OnHandleBGoBack2" rotate="-96.2" startX="-100.0" stroke="#992937" strokeLineCap="ROUND" strokeWidth="5.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
