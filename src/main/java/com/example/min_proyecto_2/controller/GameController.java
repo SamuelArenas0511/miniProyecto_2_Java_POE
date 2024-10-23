@@ -2,7 +2,6 @@ package com.example.min_proyecto_2.controller;
 
 import com.example.min_proyecto_2.Sounds;
 import com.example.min_proyecto_2.model.font.Fonts;
-import com.example.min_proyecto_2.model.gameLogic.AGameLogic;
 import com.example.min_proyecto_2.model.gameLogic.GameLogic;
 import com.example.min_proyecto_2.model.matrixcreator.MatrixCreator;
 import com.example.min_proyecto_2.view.GameStage;
@@ -21,7 +20,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -32,69 +30,86 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Random;
 
+/**
+ * GameController is responsible for managing the game's user interface and
+ * handling user interactions in a Sudoku game. It initializes the game state,
+ * manages hints, tracks the game timer, and updates the UI accordingly.
+ *
+ * @author Nicolas Córdoba, Samuel Arenas
+ */
 public class GameController {
 
-
+    /**
+     * This section includes all the UI components that are part of the game interface:
+     * - Labels: These are used to display important game information like the number of hints, attempts left, the score, and status messages.
+     * - Buttons: Interactive elements that allow the user to perform actions such as undoing moves, using hints, or toggling notes.
+     * - GridPane: The layout container that holds the Sudoku grid.
+     * - ImageView: Used to provide visual feedback, such as the number of attempts left in the game.
+     */
     @FXML
     private AnchorPane anchorPaneGame;
-
     @FXML
     private Label lbNumberHints;
-
     @FXML
     private Label lbAttempts;
-
     @FXML
     private Label lbScoreMessage;
-
     @FXML
     private Label lbUndo;
-
     @FXML
     private Label lbNotes;
-
     @FXML
     private Label lbHint;
-
     @FXML
     private Label lbStatusNotes;
     private boolean statusNotes = false;
-
     @FXML
     private GridPane sudokuGridPane;
-
     @FXML
     private Button bGoBack;
-
     @FXML
     private Label lbScore;
-
     @FXML
     private ImageView ivAttempts;
-
     @FXML
     private Button btnUndoGame;
-
     @FXML
     private Button btnNote;
-
     @FXML
     private Button btnHint;
-    private int numberOfHints = 3;
-
     @FXML
     private Label lbStopWatch;
     private int seconds;
     private Timeline timeline;
+
+    /**
+     * This section contains variables and objects that manage the core game logic:
+     * - MatrixCreator: Responsible for generating the Sudoku board.
+     * - GameLogic: Handles the main gameplay mechanics, such as validating moves and managing the game flow.
+     * - TextField[][]: The 2D array that represents the Sudoku grid, where the player inputs numbers.
+     * - Game state variables: Track game status, number of hints available, whether the notes feature is enabled, and if the game is finished.
+     */
+    private TextField[][] textFields;
+    private MatrixCreator matrixCreator;
+    private GameLogic game;
+    private int numberOfHints = 3;
     private boolean isStopWatchOn;
     private boolean isGameFinished;
 
-    private TextField[][] textFields;
 
-    private MatrixCreator matrixCreator;
-    private GameLogic game;
-    private Sounds yeii;
+    /**
+     * This attributes handles the sounds played during the game:
+     */
+    private Sounds soundCorrectLetter;
+    private Sounds soundIncorrectLetter;
+    private Sounds soundWinGame;
+    private Sounds soundloseGame;
 
+    /**
+     * Initializes the game scene with the necessary configurations.
+     * This method sets up fonts for various labels and buttons, initializes game logic,
+     * prepares sounds, and sets up the Sudoku grid with TextField elements.
+     */
     public void initialize() {
 
         lbStopWatch.setFont(new Fonts(45, "bold").getFont());
@@ -111,8 +126,15 @@ public class GameController {
         game = new GameLogic();
         textFields = new TextField[6][6];
         isGameFinished = false;
-        yeii = new Sounds();
-        yeii.loadSound("src/main/resources/com/example/min_proyecto_2/yeii.wav");
+
+        soundCorrectLetter = new Sounds();
+        soundIncorrectLetter = new Sounds();
+        soundWinGame = new Sounds();
+        soundloseGame = new Sounds();
+        soundIncorrectLetter.loadSound("src/main/resources/com/example/min_proyecto_2/sounds/incorrectSound.wav");
+        soundCorrectLetter.loadSound("src/main/resources/com/example/min_proyecto_2/sounds/correctSound.wav");
+        soundWinGame.loadSound("src/main/resources/com/example/min_proyecto_2/sounds/winSound.wav");
+        soundloseGame.loadSound("src/main/resources/com/example/min_proyecto_2/sounds/lostGameSound.wav");
 
         game.setAttempts(3);
         isStopWatchOn = false;
@@ -148,6 +170,14 @@ public class GameController {
         game.unDoStackAdd(textFields);
     }
 
+    /**
+     * Adds an event handler to handle key press events on a TextField in the Sudoku grid.
+     * This method specifically checks for non-digit keys and handles the backspace key.
+     *
+     * @param textField The TextField where the event handler is added.
+     * @param i The row index of the TextField in the Sudoku grid.
+     * @param j The column index of the TextField in the Sudoku grid.
+     */
     private void onHandlePressedTxt(TextField textField, int i, int j) {
         textField.setOnKeyPressed((KeyEvent event) -> {
             if(!event.getCode().isDigitKey()){
@@ -158,7 +188,16 @@ public class GameController {
         });
     }
 
-
+    /**
+     * Adds an event handler to handle text entry events on a TextField in the Sudoku grid.
+     * This method processes user input to check if the entered number is correct or incorrect.
+     * It also handles the game's view, including updating the score, verifying if the player has won or lost,
+     * and applying various visual and sound effects.
+     *
+     * @param textField The TextField where the event handler is added.
+     * @param i The row index of the TextField in the Sudoku grid.
+     * @param j The column index of the TextField in the Sudoku grid.
+     */
     private void onHandleEntryTxt(TextField textField, int i, int j) {
         textField.setOnKeyTyped(event -> {
             if(!statusNotes && textField.isEditable()){
@@ -173,17 +212,20 @@ public class GameController {
                         for (int k = 0; k<250;k++){
                             createConfetti(anchorPaneGame, anchorPaneGame.getLayoutX(), anchorPaneGame.getLayoutY());
                         }
-                        yeii.playSound();
+                        soundCorrectLetter.playSound();
 
                     }
                     game.setScore(game.getScore() + 100, i, j);
                     lbScore.setText(game.getScore() + "");
                     if (game.verifyWinner()){
+                        for (int k = 0; k<400;k++){
+                            createConfetti(anchorPaneGame, anchorPaneGame.getLayoutX(), anchorPaneGame.getLayoutY());
+                        }
                         handleGameWon();
                     }
                 }else{
                     styleForIncorrectNumber(textField);
-
+                    soundIncorrectLetter.playSound();
                     applyShakeEffect(textField,ivAttempts);
                     game.setAttempts(game.getAttempts() - 1);
                     ivAttempts.setImage(new Image(String.valueOf(getClass().getResource("/com/example/min_proyecto_2/vidas" + game.getAttempts() + ".png"))));
@@ -201,6 +243,13 @@ public class GameController {
         });
     }
 
+    /**
+     * Applies a shake effect to a TextField and an ImageView to indicate an incorrect action.
+     * The shake effect is created using a TranslateTransition that moves the elements horizontally.
+     *
+     * @param textField The TextField to which the shake effect is applied.
+     * @param imageView The ImageView to which the shake effect is applied (e.g., the attempts icon).
+     */
     private void applyShakeEffect(TextField textField, ImageView imageView) {
         TranslateTransition transition = new TranslateTransition(Duration.millis(50), textField);
         transition.setFromX(0);
@@ -217,6 +266,12 @@ public class GameController {
         transition2.play();
     }
 
+    /**
+     * Applies a zoom-in and zoom-out effect to a Label.
+     * The zoom effect is achieved using a ScaleTransition, which enlarges and then shrinks the Label.
+     *
+     * @param label The Label to which the zoom effect is applied.
+     */
     private void applyZoomEffect(Label label) {
         ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(200), label);
         scaleTransition.setFromX(1.0);
@@ -228,20 +283,25 @@ public class GameController {
         scaleTransition.play();
     }
 
+    /**
+     * Creates a confetti effect by adding a small, colored rectangle to the specified pane.
+     * The confetti falls from a starting position and moves downward with a random lateral shift, simulating falling confetti.
+     *
+     * @param pane The Pane where the confetti will be added.
+     * @param startX The initial X position of the confetti.
+     * @param startY The initial Y position of the confetti.
+     */
     private void createConfetti(Pane pane, double startX, double startY) {
         Random random = new Random();
 
-        // Crear un círculo pequeño que será el confeti
         Rectangle confetti = new Rectangle(random.nextInt(5)+2,random.nextInt(5)+2, getRandomColor());
         confetti.setLayoutX(startX + random.nextInt(1000)); // Posición inicial cercana al TextField
         confetti.setLayoutY(startY);
 
         pane.getChildren().add(confetti);
 
-        // Obtener la altura de la ventana (el Pane) para que el confeti caiga hasta el final
         double paneHeight = pane.getHeight();
 
-        // Animación para que el confeti caiga de forma fluida hasta el final de la pantalla
         TranslateTransition transition = new TranslateTransition(Duration.seconds(random.nextDouble(7)+2), confetti);
         transition.setByY(paneHeight - startY); // Caída hasta el final de la pantalla
         transition.setByX(random.nextInt(200) - 25); // Movimiento lateral aleatorio
@@ -250,11 +310,20 @@ public class GameController {
         transition.play();
     }
 
+    /**
+     * Generates a random color by creating an RGB color with random values for red, green, and blue components.
+     *
+     * @return A randomly generated Color object.
+     */
     private Color getRandomColor() {
         Random random = new Random();
         return Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
     }
 
+    /**
+     * Starts a stopwatch that updates every second. The stopwatch runs indefinitely until stopped.
+     * The method creates a Timeline that triggers the updateStopWatch method every second.
+     */
     private void stopWatch() {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateStopWatch()));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -262,12 +331,20 @@ public class GameController {
         isStopWatchOn = true;
     }
 
+    /**
+     * Resumes the stopwatch to continue timing the game.
+     * This method restarts the timeline that tracks the elapsed time in the game.
+     */
     public void continueGame() {
         timeline.play();
         isStopWatchOn = true;
     }
 
-
+    /**
+     * Updates the stopwatch display by incrementing the elapsed time in seconds.
+     * This method calculates the total minutes and remaining seconds,
+     * then formats and sets the text of the stopwatch label.
+     */
     private void updateStopWatch(){
         seconds++;
         int minutes = seconds / 60;
@@ -275,6 +352,14 @@ public class GameController {
         lbStopWatch.setText(String.format("%02d:%02d", minutes, secondremainder));
     }
 
+    /**
+     * Adds a listener to a TextField that changes the background color
+     * of the associated row, column, and subgrid when the TextField gains or loses focus.
+     *
+     * @param textField The TextField to which the focus property listener is added.
+     * @param fil The row index of the TextField in the grid.
+     * @param col The column index of the TextField in the grid.
+     */
     public void focusedProperty(TextField textField, int fil, int col) {
         textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -309,7 +394,13 @@ public class GameController {
         });
     }
 
-
+    /**
+     * Handles the action event for the hint button.
+     * If there are hints available, it generates a hint and updates the game state accordingly.
+     *
+     * @param event The action event triggered by clicking the hint button.
+     * @throws IOException If there is an issue with input or output during the process.
+     */
     @FXML
     void onHandleBHint(ActionEvent event) throws IOException {
         if(numberOfHints > 0){
@@ -329,6 +420,11 @@ public class GameController {
                     styleForCorrectNumber(textField);
                     game.setScore(game.getScore() + 100, game.getHintRowPosition(), game.getHintColumnPosition());
                     lbScore.setText(game.getScore() + "");
+                    applyZoomEffect(lbScore);
+                    for (int k = 0; k<250;k++){
+                        createConfetti(anchorPaneGame, anchorPaneGame.getLayoutX(), anchorPaneGame.getLayoutY());
+                    }
+                    soundCorrectLetter.playSound();
                     if (game.verifyWinner()){
                         handleGameWon();
                     };
@@ -341,6 +437,12 @@ public class GameController {
 
     }
 
+    /**
+     * Handles the action event for the notes button.
+     * Toggles the note-taking mode on or off and updates the display accordingly.
+     *
+     * @param event The action event triggered by clicking the notes button.
+     */
     @FXML
     void onHandleBNote(ActionEvent event) {
         if(!statusNotes){
@@ -352,6 +454,13 @@ public class GameController {
         }
     }
 
+    /**
+     * Handles the action event for the undo button.
+     * If there are previous actions in the undo stack, it reverts the last action
+     * and updates the Sudoku grid accordingly.
+     *
+     * @param event The action event triggered by clicking the undo button.
+     */
     @FXML
     void onHandleBUndo(ActionEvent event) {
         if(game.getUnDoStackAction().size() > 1) {
@@ -371,6 +480,11 @@ public class GameController {
         }
     }
 
+    /**
+     * Restarts the current game by resetting the game state and user interface.
+     * Clears all editable fields in the Sudoku grid, resets scores, attempts, and hints,
+     * and prepares the game for a new session.
+     */
     private void restartGame(){
         for(int i = 0; i < textFields.length; i++){
             for(int j = 0; j < textFields[i].length; j++){
@@ -396,12 +510,25 @@ public class GameController {
 
     }
 
-
+    /**
+     * Handles the action when the user clicks the "Go Back" button.
+     * Closes the current game stage and returns to the welcome stage.
+     * Stops the stopwatch timer.
+     *
+     * @param actionEvent The event triggered by clicking the button.
+     * @throws IOException If an I/O error occurs while closing the stage.
+     */
     public void OnHandleBGoBack(ActionEvent actionEvent) throws IOException {
         WelcomeStage.getInstance();
         GameStage.getInstance().closeInstance();
         timeline.stop();
     }
+    /**
+     * Handles the action when the user clicks the "Go Back" arrow of the view xD
+     *
+     * @param event The mouse event triggered by clicking the button.
+     * @throws IOException If an I/O error occurs while closing the stage.
+     */
     @FXML
     void OnHandleBGoBack2(MouseEvent event) throws IOException {
         WelcomeStage.getInstance();
@@ -409,20 +536,41 @@ public class GameController {
         timeline.stop();
     }
 
+    /**
+     * Retrieves the current game time displayed on the stopwatch.
+     *
+     * @return A string representing the game time in the format "mm:ss".
+     */
     public String getGameTime() {
         return lbStopWatch.getText();
     }
 
+    /**
+     * Checks if the game is finished.
+     *
+     * @return True if the game is finished; otherwise, false.
+     */
     public boolean getIsGameFinished() {
         return isGameFinished;
     }
 
+    /**
+     * Applies a style to the specified TextField when a correct number is entered.
+     * Changes the text color to indicate correctness.
+     *
+     * @param textField The TextField to style.
+     */
     public void styleForCorrectNumber(TextField textField){
         textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #29507D");
         textField.setFont(new Fonts(38,"bold").getFont());
     }
 
+    /**
+     * Handles the actions when the game is won.
+     * Stops the game timer, plays a victory sound, and displays a congratulatory alert.
+     */
     public void handleGameWon(){
+        soundWinGame.playSound();
         timeline.stop();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("¡VICTORIA!");
@@ -464,7 +612,12 @@ public class GameController {
         }
     }
 
+    /**
+     * Handles the actions when the game is lost.
+     * Stops the game timer, plays a loss sound, and displays an alert indicating the game has ended.
+     */
     public void handleGameLost(){
+        soundloseGame.playSound();
         timeline.stop();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("¡Perdiste!");
@@ -501,7 +654,15 @@ public class GameController {
         restartGame();
     }
 
+    /**
+     * Handles the text entry in the TextField to ensure it conforms to the game rules.
+     * Checks the maximum number of characters allowed and validates the entered number.
+     *
+     * @param textField The TextField where text is being entered.
+     * @return True if the input was invalid; otherwise, false.
+     */
     public boolean handleTextEntered(TextField textField){
+
         if(game.checkMaximumNumberOfCharacters(textField.getText(), 1)){
             if(textField.getText().substring(0,1).equals(textField.getText().substring(1,2))){
                 textField.setText("");
@@ -520,16 +681,32 @@ public class GameController {
         return false;
     }
 
+    /**
+     * Applies a style to the specified TextField when an incorrect number is entered.
+     * Changes the text color to indicate an error.
+     *
+     * @param textField The TextField to style.
+     */
     public void styleForIncorrectNumber(TextField textField){
         textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #9c4040");
         textField.setFont(new Fonts(38,"bold").getFont());
     }
 
+    /**
+     * Applies a style to the specified TextField for note-taking.
+     * Changes the text color to indicate it's in note mode.
+     *
+     * @param textField The TextField to style.
+     */
     public void styleForNotes(TextField textField){
         textField.setStyle("-fx-border-color: TRANSPARENT; -fx-text-fill: #585959");
         textField.setFont(new Fonts(38,"bold").getFont());
     }
 
+    /**
+     * Displays an alert when there are no hints left.
+     * Informs the user that they have run out of hints.
+     */
     public void hintAlert(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("¡Sin pistas!");

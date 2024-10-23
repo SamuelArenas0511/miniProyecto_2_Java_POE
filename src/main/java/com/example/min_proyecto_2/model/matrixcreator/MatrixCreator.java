@@ -1,29 +1,60 @@
 package com.example.min_proyecto_2.model.matrixcreator;
 
+import com.example.min_proyecto_2.model.AGame;
+
 import java.util.Random;
 
-public class MatrixCreator extends AMatrixCreator {
+/**
+ * The {@code MatrixCreator} class is responsible for generating a 6x6 Sudoku matrix.
+ * It extends {@link AGame} and provides implementations for filling the Sudoku matrix, resetting the matrix,
+ * verifying if a number can be placed in a given position, and generating random starting numbers.
+ * This class generates a valid Sudoku board by checking row, column, and subgrid constraints.
+ *
+ * The class uses a backtracking-like approach to place numbers in the matrix with a limited number of attempts.
+ * If placement fails after a set number of attempts, the board is reset and the process restarts.
+ *
+ * This implementation is designed for a 6x6 variant of Sudoku.
+ *
+ * @author Nicolas Cordoba
+ * @author Samuel Arenas
+ */
+public class MatrixCreator extends AGame {
 
+    /**
+     * The 6x6 Sudoku matrix.
+     * It stores the generated numbers for the Sudoku board.
+     */
     private final int[][] matrix = new int[6][6];
 
+    /**
+     * The 6x6 matrix that keeps track of the starting numbers of the Sudoku puzzle.
+     * These positions are used to determine which numbers the user is going to see at
+     * the start of the game.
+     */
     private final int[][] startingNumbers = new int[6][6];
 
-    public MatrixCreator(){resetMatrix();}
+    /**
+     * Constructor for {@code MatrixCreator}.
+     * It initializes the Sudoku matrix by resetting it.
+     */
+    public MatrixCreator() {
+        resetMatrix();
+    }
 
     @Override
     public void fillSudokuMatrix() {
 
-        int intentos, num;
-        int max_int = 100;
+        int attempts, num;
+        int max_attempts = 100;
         Random r = new Random();
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
-                intentos = 0;
+                attempts = 0;
                 do {
                     num = r.nextInt(6)+ 1;
-                    intentos++;
-                    if (intentos > max_int) {
+                    attempts++;
+                    if (attempts > max_attempts) {
                         System.out.println("Demasiados intentos, reiniciando tablero.");
                         showMatrix();
                         resetMatrix();
@@ -32,7 +63,7 @@ public class MatrixCreator extends AMatrixCreator {
                         break;
                     }
                 } while (!verifyNumber(matrix, i, j, num));
-                if (intentos <= max_int) {
+                if (attempts <= max_attempts) {
                     matrix[i][j] = num;
                 }
             }
@@ -63,22 +94,22 @@ public class MatrixCreator extends AMatrixCreator {
     }
 
     @Override
-    public boolean verifyNumber(int[][] tablet, int fil, int col, int num) {
-        for (int i = 0; i < tablet.length; i++) {
-            if (tablet[fil][i] == num && i != col) {
+    public boolean verifyNumber(int[][] board, int row, int col, int num) {
+        for (int i = 0; i < board.length; i++) {
+            if (board[row][i] == num && i != col) {
                 return false;
             }
         }
-        for (int i = 0; i < tablet.length; i++) {
-            if (tablet[i][col] == num && i != fil) {
+        for (int i = 0; i < board.length; i++) {
+            if (board[i][col] == num && i != row) {
                 return false;
             }
         }
-        int subFil = (fil / 2) * 2;
-        int subcol = (col / 3) * 3;
-        for (int i = subFil; i < subFil + 2; i++) {
-            for (int j = subcol; j < subcol + 3; j++) {
-                if (tablet[i][j] == num && i != fil && j != col) {
+        int subrow = (row / 2) * 2;
+        int subcolumn = (col / 3) * 3;
+        for (int i = subrow; i < subrow + 2; i++) {
+            for (int j = subcolumn; j < subcolumn + 3; j++) {
+                if (board[i][j] == num && i != row && j != col) {
                     return false;
                 }
             }
@@ -93,18 +124,18 @@ public class MatrixCreator extends AMatrixCreator {
                 startingNumbers[i][j] = 0;
             }
         }
-        int fil;
-        int col;
-        int rangofil = 1;
-        int rangofcol = 2;
+        int row;
+        int column;
+        int rangerow = 1;
+        int rangefcol = 2;
         for(int i = 0; i < 6; i += 2){
             for(int j = 0; j < 6; j += 3){
                 for(int k = 0; k < 2; k++) {
                     do {
-                        fil = generateRandomNumberInRange(i, i + rangofil);
-                        col = generateRandomNumberInRange(j, j + rangofcol);
-                    } while (startingNumbers[fil][col] == 1);
-                    startingNumbers[fil][col] = 1;
+                        row = generateRandomNumberInRange(i, i + rangerow);
+                        column = generateRandomNumberInRange(j, j + rangefcol);
+                    } while (startingNumbers[row][column] == 1);
+                    startingNumbers[row][column] = 1;
                 }
             }
         }

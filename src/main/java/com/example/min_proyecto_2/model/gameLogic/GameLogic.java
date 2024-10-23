@@ -1,22 +1,84 @@
 package com.example.min_proyecto_2.model.gameLogic;
 
+import com.example.min_proyecto_2.model.AGame;
 import com.example.min_proyecto_2.model.matrixcreator.MatrixCreator;
 import javafx.scene.control.TextField;
 
 import java.util.Stack;
 
-public class GameLogic extends AGameLogic {
-    
+/**
+ * The {@code GameLogic} class manages the game logic for a Sudoku game.
+ * It tracks the current state of the Sudoku grid, the matched numbers, score, attempts, and provides methods for handling user input,
+ * verifying correct answers, and providing hints. It also manages undo operations by keeping a stack of previous game states.
+ *
+ * This class supports a 6x6 Sudoku grid and uses stacks to implement undo functionality for user actions.
+ *
+ * It provides functionality to:
+ * - Check if a player's input matches the correct solution.
+ * - Track the player's score and attempts.
+ * - Generate hints for players.
+ * - Undo player actions.
+ *
+ * The game ends when either all numbers are matched or when attempts run out.
+ *
+ * @author Nicolas Cordoba
+ * @author Samuel Arenas
+ */
+public class GameLogic extends AGame {
+
+    /**
+     * Tracks the positions of correctly matched numbers in the Sudoku grid.
+     * A value of 1 indicates the number in that position has been correctly matched, while 0 means it hasn't.
+     */
     private int[][] matchedNumbers;
+
+    /**
+     * Stores the positions of numbers that have been used for scoring, to avoid re-scoring the same number.
+     */
     private int[][] scoredNumbers;
+
+    /**
+     * Stores the solution matrix for the Sudoku game.
+     * This matrix holds the correct numbers that need to be matched.
+     */
     private int[][] matrix;
+
+    /**
+     * A stack that keeps track of previous game states for the undo functionality.
+     * Each element is a 2D array representing the grid at a previous point in time.
+     */
     private Stack<int[][]> unDoStackAction;
+
+    /**
+     * A stack that keeps track of previous style states (e.g., color, text) for undo functionality.
+     * Each element is a 2D array of styles for each text field.
+     */
     private Stack<String[][]> unDoStackActionStyle;
+
+    /**
+     * The player's current score in the game.
+     */
     private int score;
+
+    /**
+     * The remaining number of attempts the player has to complete the Sudoku puzzle.
+     */
     private int attempts;
+
+    /**
+     * The row position for the generated hint.
+     */
     private int hintRowPosition = 0;
+
+    /**
+     * The column position for the generated hint.
+     */
     private int hintColumnPosition = 0;
-    
+
+    /**
+     * Constructor for {@code GameLogic}.
+     * Initializes the matched numbers, scored numbers, and undo stacks.
+     */
     public GameLogic() {
         matchedNumbers = new int[6][6];
         matrix = new int[6][6];
@@ -24,6 +86,7 @@ public class GameLogic extends AGameLogic {
         unDoStackActionStyle = new Stack<>();
         scoredNumbers = new int[6][6];
     }
+
     @Override
     public void setMatchedNumbers(int[][] matchedNumbers) {
         this.matchedNumbers = matchedNumbers;
@@ -80,13 +143,6 @@ public class GameLogic extends AGameLogic {
     }
 
     public void setScore(int score, int i, int j){
-        for(int k = 0; k < matchedNumbers.length; k++){
-            for(int l = 0; l < matchedNumbers[i].length; l++){
-                System.out.print(String.valueOf(scoredNumbers[k][l]) + "\t");
-            }
-            System.out.println();
-        }
-        System.out.println();
         if(scoredNumbers[i][j] == 0) {
             this.score = score;
             scoredNumbers[i][j] = 1;
